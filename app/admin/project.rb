@@ -1,4 +1,7 @@
+include Geokit::Geocoders
+
 ActiveAdmin.register Project do
+
   permit_params :name, :location, :company_id
 
   controller do
@@ -35,7 +38,14 @@ ActiveAdmin.register Project do
     selectable_column
     id_column
     column :name
-    column :location
+    column :location do |project|
+      projectLocation = project.location.split(',')
+      projectGeoLoc = Geokit::GeoLoc.new(lat:projectLocation[0],lng:projectLocation[1])
+
+      loc = Geokit::Geocoders::GoogleGeocoder.reverse_geocode projectGeoLoc
+
+      link_to "#{loc.full_address}", "http://map.google.com/?q=#{project.location}"
+    end
     column :company
     column :created_at
     actions
@@ -59,7 +69,7 @@ ActiveAdmin.register Project do
   form do |f|
       f.inputs "Project Details" do
       f.input :name
-      f.input :location
+      f.input :location, label: 'Location (lat,lng). Use Google Map to find the coordinates.)'
       f.input :company, as: :select, include_blank: false, collection:
                           if current_user.role? :Root
                             Company.all.map{|u| ["#{u.name}", u.id]}

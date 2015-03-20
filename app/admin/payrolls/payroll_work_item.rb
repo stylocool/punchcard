@@ -25,19 +25,39 @@ class PayrollWorkItem
     seconds_diff -= minutes * 60
     seconds = seconds_diff
 
-    @total_hours = hours + minutes/60
+    lunch_hour = checkin.hour < 11
+    dinner_hour = checkout.hour >= 22
 
-    # work hours
-    if hours > company_setting.working_hours.to_i
-      @normal_work_hours = company_setting.working_hours.to_i
-      hours -= company_setting.working_hours.to_i
-      @overtime_work_hours = hours + minutes / 60
-    else
-      @normal_work_hours = hours + minutes / 60
+    hours = hours + minutes/60
+
+    if company_setting.lunch_hour && lunch_hour
+      hours = hours - 1
+    end
+    if company_setting.dinner_hour && dinner_hour
+      hours = hours - 1
     end
 
-    @amount_normal = @normal_work_hours.to_i * company_setting.rate.to_i
-    @amount_overtime = @overtime_work_hours.to_i * company_setting.overtime_rate.to_i
+    @total_hours = hours
+
+    # work hours
+    if hours > company_setting.working_hours.to_f
+      @normal_work_hours = company_setting.working_hours.to_f
+      hours -= company_setting.working_hours.to_f
+      @overtime_work_hours = hours
+    else
+      @normal_work_hours = hours
+    end
+
+    hour_rate = company_setting.rate.to_f / company_setting.working_hours.to_f
+    overtime_rate = hour_rate * company_setting.overtime_rate.to_f
+
+    if @normal_work_hours == company_setting.working_hours.to_f
+      @amount_normal = company_setting.rate.to_f
+    else
+      @amount_normal = @normal_work_hours.to_f * hour_rate
+    end
+
+    @amount_overtime = @overtime_work_hours.to_f * overtime_rate
     @amount = @amount_normal + @amount_overtime
 
     @amount_deduction = 0
@@ -46,9 +66,9 @@ class PayrollWorkItem
       @amount = 0
     end
 
-    if @punchcard.fine.to_i > 0
-      @amount = @punchcard.fine.to_i
-      @amount_deduction += @punchcard.fine.to_i
+    if @punchcard.fine.to_f > 0
+      @amount = @punchcard.fine.to_f
+      @amount_deduction += @punchcard.fine.to_f
     end
 
     #if @amount < 0

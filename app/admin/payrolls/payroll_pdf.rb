@@ -16,7 +16,7 @@ class PayrollPdf < Prawn::Document
     payroll_message
     worker_table
     payroll_table
-    #regards_message
+
   end
 
   def company

@@ -1,12 +1,12 @@
 source 'https://rubygems.org'
 
+gem 'puma'
 gem 'devise'
 gem 'activeadmin', github: 'activeadmin'
 gem 'country_select', github: 'stefanpenner/country_select'
 gem 'users'
 gem 'cancancan'
 gem 'geokit-rails'
-gem 'letter_opener', group: :development
 gem 'prawn-rails'
 gem 'wicked'
 
@@ -57,5 +57,6 @@ group :development, :test do
   gem 'faker'
   gem 'capybara'
   gem 'selenium-webdriver'
+  gem 'letter_opener'
 end
 

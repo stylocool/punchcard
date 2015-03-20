@@ -83,7 +83,9 @@ ActiveAdmin.register Punchcard do
       checkinGeoLoc = Geokit::GeoLoc.new(lat:checkinLocation[0],lng:checkinLocation[1])
       checkinDistance = checkinGeoLoc.distance_to(projectGeoLoc, :units => :kms)
 
-      if checkinDistance.round(2) > 0.5
+      company_setting = punchcard.company.company_setting
+
+      if checkinDistance.round(2) > company_setting.distance_check.to_i
         content_tag(:div, "#{checkinDistance.round(2)} km", style: "color:red")
       else
         content_tag(:div, "#{checkinDistance.round(2)} km")
@@ -98,7 +100,9 @@ ActiveAdmin.register Punchcard do
       checkoutGeoLoc = Geokit::GeoLoc.new(lat:checkoutLocation[0],lng:checkoutLocation[1])
       checkoutDistance = checkoutGeoLoc.distance_to(projectGeoLoc, :units => :kms)
 
-      if checkoutDistance.round(2) > 0.5
+      company_setting = punchcard.company.company_setting
+
+      if checkoutDistance.round(2) > company_setting.distance_check.to_i
         content_tag(:div, "#{checkoutDistance.round(2)} km", style: "color:red")
       else
         content_tag(:div, "#{checkoutDistance.round(2)} km")
@@ -113,8 +117,17 @@ ActiveAdmin.register Punchcard do
 
     column :cancel_pay
 
+    column 'Total/Normal/Overtime Hours', :total_hours do |punchcard|
+      work = PayrollWorkItem.new
+      work.punchcard = punchcard
+      work.calculate
+      "#{work.total_hours} / #{work.normal_work_hours} / #{work.overtime_work_hours}"
+    end
+
     column :amount do |punchcard|
-      work = PayrollWorkItem.new(punchcard)
+      work = PayrollWorkItem.new
+      work.punchcard = punchcard
+      work.calculate
       "#{number_to_currency(work.amount)}"
     end
 

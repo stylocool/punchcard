@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150316141939) do
+ActiveRecord::Schema.define(version: 20150312092111) do
 
   create_table "active_admin_comments", force: :cascade do |t|
     t.string   "namespace"
@@ -39,9 +39,12 @@ ActiveRecord::Schema.define(version: 20150316141939) do
 
   create_table "company_settings", force: :cascade do |t|
     t.string   "name"
-    t.integer  "rate"
-    t.integer  "overtime_rate"
-    t.string   "working_hours"
+    t.float    "rate"
+    t.float    "overtime_rate"
+    t.integer  "working_hours"
+    t.boolean  "lunch_hour"
+    t.boolean  "dinner_hour"
+    t.float    "distance_check"
     t.datetime "created_at"
     t.integer  "company_id"
   end
@@ -85,11 +88,11 @@ ActiveRecord::Schema.define(version: 20150316141939) do
     t.datetime "checkout"
     t.string   "checkin_location"
     t.string   "checkout_location"
+    t.integer  "fine"
+    t.boolean  "cancel_pay"
     t.integer  "company_id"
     t.integer  "project_id"
     t.integer  "worker_id"
-    t.integer  "fine"
-    t.boolean  "cancel_pay"
   end
 
   add_index "punchcards", ["company_id"], name: "index_punchcards_on_company_id"
