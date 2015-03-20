@@ -1,0 +1,41 @@
+<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&key=AIzaSyBJYFdplGeKUUEmGZ-vL4ydiSZ09Khsa_o&sensor=false&libraries=drawing"></script>
+<script>
+    // In the following example, markers appear when the user clicks on the map.
+    // The markers are stored in an array.
+    // The user can then click an option to hide, show or delete the markers.
+    var map;
+    var markers = [];
+
+    function initialize() {
+        var projectLocation = new google.maps.LatLng(<%=@projectLat%>, <%=@projectLng%>);
+        var checkinLocation = new google.maps.LatLng(<%=@checkinLat%>, <%=@checkinLng%>);
+        var checkoutLocation = new google.maps.LatLng(<%=@checkoutLat%>, <%=@checkoutLng%>);
+
+        var mapOptions = {
+            zoom: 17,
+            center: projectLocation
+
+        };
+        map = new google.maps.Map(document.getElementById("map-canvas"),
+                mapOptions);
+
+        addMarker(projectLocation, "<%=@projectTitle%>");
+        addMarker(checkinLocation, "<%=@checkinTitle%>");
+        addMarker(checkoutLocation, "<%=@checkoutTitle%>");
+
+    }
+
+    // Add a marker to the map and push to the array.
+    function addMarker(location, msg, star) {
+        var marker = new google.maps.Marker({
+            position: location,
+            map: map,
+            title: msg,
+        });
+        markers.push(marker);
+    }
+
+    google.maps.event.addDomListener(window, 'load', initialize);
+
+</script>
+<div id="map-canvas" style="height:800px; width:800px; margin:0px; padding:0px"></div>

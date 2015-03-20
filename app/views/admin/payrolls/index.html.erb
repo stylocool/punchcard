@@ -1,0 +1,26 @@
+<div id="active_admin_content" class="without_sidebar">
+  <div id="main_content_wrapper">
+    <div id="main_content">
+<%= form_for(@payroll, :url => '/admin/payrolls', :method => :put) do |f| %>
+          <fieldset class="inputs"><legend><span>Select Payroll Type</span></legend>
+            <ol>
+              <li class="string input optional stringish" id="company_setting_name_input">
+                <label for="payroll_type" class="label">Payroll Type</label>
+                <select name="payroll[type]" id="payroll[type]">
+                  <!--<option value="Company">Company</option>-->
+                  <option selected="selected" value="Worker">Worker</option>
+                </select>
+              </li>
+            </ol>
+          </fieldset>
+          <fieldset class="actions">
+            <ol>
+              <li class="action input_action " id="payroll_submit_action">
+                <input type="submit" name="commit" value="Next" />
+              </li>
+            </ol>
+          </fieldset>
+<% end %>
+    </div>
+  </div>
+</div>

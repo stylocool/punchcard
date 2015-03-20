@@ -1,0 +1,173 @@
+<table style="width:800px;border: solid">
+  <tr><td colspan="2">&nbsp;</td></tr>
+  <tr>
+    <td style="text-align: center;font-size: large" colspan="2">
+      <img id="logo" src="">
+      <%=@worker.company.name%>
+    </td>
+  </tr>
+  <tr>
+    <td style="text-align: center;font-size: small" colspan="2">
+      <%=@worker.company.address%>
+    </td>
+  </tr>
+  <tr>
+    <td style="text-align: center;font-size: small" colspan="2">
+      Payslip for the period of <%=@period.strftime("%B %Y")%>
+    </td>
+  </tr>
+  <tr>
+    <td style="width: 400px">
+      <table>
+        <tr>
+          <td>Employer Id</td>
+          <td>:</td>
+          <td><%=@worker.id%></td>
+        </tr>
+        <tr>
+          <td>Department</td>
+          <td>:</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>Date of Joining</td>
+          <td>:</td>
+          <td><%=@worker.created_at.strftime("%d %B %Y")%></td>
+        </tr>
+        <tr>
+          <td>Days Worked</td>
+          <td>:</td>
+          <td><%=@days_worked%></td>
+        </tr>
+        <tr>
+          <td>Bank Acct/Cheque Number</td>
+          <td>:</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>Earn Leave</td>
+          <td>:</td>
+          <td></td>
+        </tr>
+      </table>
+    </td>
+    <td style="width: 400px">
+      <table>
+        <tr>
+          <td>Name</td>
+          <td>:</td>
+          <td><%=@worker.name%></td>
+        </tr>
+        <tr>
+          <td>Designation</td>
+          <td>:</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>PF Account Number</td>
+          <td>:</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>ESI Account Number Worked</td>
+          <td>:</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>Next-of-Kin</td>
+          <td>:</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>Casual Leave</td>
+          <td>:</td>
+          <td></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+  <tr>
+    <td style="width:800px" colspan="2">
+      <table style="border:solid">
+        <tr>
+          <th style="border-bottom: solid;width:200px">Earnings</th>
+          <th style="border-bottom: solid;border-right: solid;width:200px">Amount</th>
+          <th style="border-bottom: solid;width:200px">Deductions</th>
+          <th style="border-bottom: solid;width:200px">Amount</th>
+        </tr>
+        <tr>
+          <td>Basic Pay</td>
+          <td style="border-right: solid"><%=number_to_currency(@amount_normal)%></td>
+          <td>Employee Insurance</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>Dearness Allowance</td>
+          <td style="border-right: solid"></td>
+          <td>Central Provident Fund (CPF)</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>Medical Allowance</td>
+          <td style="border-right: solid"></td>
+          <td>Goods & Serices Tax (GST)</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>Overtime</td>
+          <td style="border-right: solid"><%=number_to_currency(@amount_overtime)%></td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>House Rent Allowance</td>
+          <td style="border-right: solid"></td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>Conveyance Allowance</td>
+          <td style="border-right: solid"></td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td style="border-top: solid">Total Earnings</td>
+          <td style="border-top: solid;border-right: solid"><%=number_to_currency(@amount_normal+@amount_overtime)%></td>
+          <td style="border-top: solid">Total Deductions</td>
+          <td style="border-top: solid"><%=number_to_currency(@amount_deduction)%></td>
+        </tr>
+        <tr>
+          <td style="border-top: solid">Previous Balance</td>
+          <td style="border-top: solid"></td>
+          <td style="border-top: solid">Net Pay (Rounded)</td>
+          <td style="border-top: solid"><%=number_to_currency(@amount)%></td>
+        </tr>
+        <tr>
+          <td>Carry Over Round-Off</td>
+          <td></td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td style="border-top: solid;" colspan="4">&nbsp;</td>
+        </tr>
+        <tr>
+          <td colspan="4">&nbsp;</td>
+        </tr>
+        <tr>
+          <td style="border-bottom: solid">&nbsp;</td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+          <td style="border-bottom: solid">&nbsp;</td>
+        </tr>
+        <tr>
+          <td>Employer's Signature</td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+          <td>Employee's Signature</td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>

@@ -1,0 +1,12 @@
+<pre>
+  Total workers: <%= @payment.total_workers %> workers<br/>
+  Rate per month: $<%= @payment.rate_per_month %><br/>
+  Months of service: <%= @payment.months_of_service %> months<br/>
+  Amount: $<%= @payment.amount %><br/>
+  Payment mode:
+  <% if @payment.mode == 'InternetBanking' %>
+    Internet Banking<br/>
+  <% else %>
+    PayPal<br/>
+  <% end %>
+</pre>

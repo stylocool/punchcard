@@ -1,0 +1,60 @@
+<div id="active_admin_content" class="without_sidebar">
+  <div id="main_content_wrapper">
+    <div id="main_content">
+      <%= form_for(@payroll, :url => '/admin/payrolls', :method => :post) do |f| %>
+          <fieldset class="inputs"><legend><span>Select Payroll Dates</span></legend>
+            <ol>
+              <li class="string input optional stringish" id="payroll_object_id_input">
+                <% if @payroll.type == 'Company' %>
+                    <%= f.label :object_id, 'Company' %>
+                <% else %>
+                    <%= f.label :object_id, 'Worker' %>
+                <% end %>
+                <%= f.select :object_id, @objects.map{ |c| [c.name, c.id] } %>
+              </li>
+              <li class="string input optional stringish" id="payroll_start_input">
+                <%= f.label :period, 'Period' %>
+                <%= f.date_select :period, {:discard_day => true} %>
+              </li>
+              <li class="string input optional stringish" id="payroll_format_input">
+                <%= f.label :mode, 'Mode' %>
+                <select name="payroll[mode]" id="[payroll_mode]" onchange="change_mode()">
+                  <option value="Details">Details</option>
+                  <option selected="selected" value="Summary">Summary</option>
+                </select>
+                (Details is only available in HTML format)
+                <script>
+                  function change_mode() {
+                      var modeSelect = document.getElementById('[payroll_mode]');
+                      var formatSelect = document.getElementById('[payroll_format]');
+                      if (modeSelect.value == 'Details') {
+                          formatSelect.options.length = 0;
+                          formatSelect.options.add(new Option('HTML', 'HTML'))
+                      } else {
+                          formatSelect.options.length = 0;
+                          formatSelect.options.add(new Option('PDF', 'PDF'));
+                          formatSelect.options.add(new Option('HTML', 'HTML'));
+                      }
+                  }
+                </script>
+              </li>
+              <li class="string input optional stringish" id="payroll_format_input">
+                <%= f.label :format, 'Format' %>
+                <select name="payroll[format]" id="[payroll_format]">
+                  <option selected="selected" value="PDF">PDF</option>
+                  <option value="HTML">HTML</option>
+                </select>
+              </li>
+            </ol>
+          </fieldset>
+          <fieldset class="actions">
+            <ol>
+              <li class="action input_action " id="payroll_submit_action">
+                <input type="submit" name="commit" value="Next" />
+              </li>
+            </ol>
+          </fieldset>
+      <% end %>
+    </div>
+  </div>
+</div>

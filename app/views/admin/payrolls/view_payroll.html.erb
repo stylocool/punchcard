@@ -1,0 +1,77 @@
+<div id="active_admin_content" class="without_sidebar">
+  <div id="main_content_wrapper">
+    <div id="main_content">
+      <% if @payroll.type == 'Company' %>
+
+      <% else %>
+      <legend><h2>Worker <%=@worker.name%> Payslip for <%=@period.strftime("%B %Y")%></h2></legend>
+      <div class="index_content">
+        <div class="index_as_table">
+          <table border="0" cellspacing="0" cellpadding="0" id="index_table_payroll" class="index_table index">
+            <thead>
+              <tr>
+                <th class="col col-date" style="text-align: center">Date</th>
+                <th class="col col-company" style="text-align: center">Company</th>
+                <th class="col col-project" style="text-align: center">Project</th>
+                <th class="col col-checkin" style="text-align: center">Checkin</th>
+                <th class="col col-checkout" style="text-align: center">Checkout</th>
+                <th class="col col-hours" style="text-align: center">Total Hours</th>
+                <th class="col col-normal-hours" style="text-align: center">Normal Hours</th>
+                <th class="col col-overtime-hours" style="text-align: center">Overtime Hours</th>
+                <th class="col col-fine" style="text-align: center">Fine</th>
+                <th class="col col-cancel-pay" style="text-align: center">Cancel Pay</th>
+                <th class="col col-amount" style="text-align: center">Amount</th>
+              </tr>
+            </thead>
+            <% if @items.present? && @items.count > 0 %>
+            <tbody>
+            <%
+               index = 1
+               total = 0
+            %>
+            <% @items.each do |item| %>
+            <% if index.odd? %>
+            <tr class="odd">
+            <% else %>
+            <tr class="even">
+            <% end %>
+              <% if item.punchcard.present? %>
+              <td class="col col-date" style="text-align: center"><%=item.date%></td>
+              <td class="col col-company" style="text-align: center"><%=item.punchcard.company.name%></td>
+              <td class="col col-project" style="text-align: center"><%=item.punchcard.project.name%></td>
+              <td class="col col-checkin" style="text-align: center"><%=item.punchcard.checkin.strftime("%Y-%m-%d %H:%M:%S")%></td>
+              <td class="col col-checkout" style="text-align: center"><%=item.punchcard.checkout.strftime("%Y-%m-%d %H:%M:%S")%></td>
+              <td class="col col-hours" style="text-align: center"><%=item.total_hours%></td>
+              <td class="col col-normal-hours" style="text-align: center"><%=item.normal_work_hours%></td>
+              <td class="col col-overtime-hours" style="text-align: center"><%=item.overtime_work_hours%></td>
+              <td class="col col-fine" style="text-align: center"><%=number_to_currency(item.punchcard.fine)%></td>
+              <td class="col col-cancel-pay" style="text-align: center"><%=number_to_currency(item.punchcard.cancel_pay)%></td>
+              <td class="col col-amount" style="text-align: center"><%=number_to_currency(item.amount)%></td>
+              <% else %>
+              <td class="col col-date" style="text-align: center"><%=item.date%></td>
+              <td class="col col-empty" colspan="10" style="text-align:center">N.A.</td>
+              <% end %>
+            </tr>
+            <%
+               total = total + item.amount.to_i
+               index = index + 1
+            %>
+            <% end %>
+
+            <% if index.odd? %>
+            <tr class="odd">
+            <% else %>
+            <tr class="even">
+            <% end %>
+              <td class="col col-total" colspan="10" style="text-align: right; font: bold"><b>Total</b></td>
+              <td class="col col-total" style="text-align: center; font: bold"><%=number_to_currency(total)%></td>
+            </tr>
+            </tbody>
+            <% end %>
+          </table>
+        </div>
+      </div>
+      <% end %>
+    </div>
+  </div>
+</div>
