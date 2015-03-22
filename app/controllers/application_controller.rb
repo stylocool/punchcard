@@ -1,5 +1,4 @@
 class ApplicationController < ActionController::Base
-  around_filter :set_time_zone
 
   # Prevent CSRF attacks by raising an exception.
   # For APIs, you may want to use :null_session instead.
@@ -43,11 +42,6 @@ class ApplicationController < ActionController::Base
 
   def access_denied(exception)
     redirect_to admin_root_path, :alert => exception.message
-  end
-
-  def set_time_zone(&block)
-    time_zone = current_user.try(:time_zone) || 'Asia/Singapore'
-    Time.use_zone(time_zone, &block)
   end
 
 end

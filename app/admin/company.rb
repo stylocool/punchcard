@@ -1,5 +1,5 @@
 ActiveAdmin.register Company do
-  permit_params :name, :address, :email, :telephone, :total_workers
+  permit_params :name, :address, :email, :telephone, :total_workers, :logo
 
   after_save      :add_user_company
   before_destroy  :remove_user_company
@@ -64,6 +64,9 @@ ActiveAdmin.register Company do
     column :email
     column :telephone
     column :total_workers
+    column 'Logo', :photo do |company|
+      image_tag(company.logo.url(:thumb), :height => '100')
+    end
     column :created_at
     actions
   end
@@ -74,13 +77,14 @@ ActiveAdmin.register Company do
   filter :name
   #filter :status
 
-  form do |f|
+  form multipart: true do |f|
       f.inputs "Company Details" do
       f.input :name
       f.input :address
       f.input :email
       f.input :telephone
       f.input :total_workers
+      f.input :logo, :required => false
       # can only select current user for all types of users
       #f.input :user, as: :select, collection: User.all.where(:id => current_user.id).map{|u| ["#{u.email}", u.id]}, include_blank: false
     end

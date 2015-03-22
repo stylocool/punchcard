@@ -67,7 +67,7 @@ class PayrollWorkItem
     end
 
     if @punchcard.fine.to_f > 0
-      @amount = @punchcard.fine.to_f
+      @amount -= @punchcard.fine.to_f
       @amount_deduction += @punchcard.fine.to_f
     end
 

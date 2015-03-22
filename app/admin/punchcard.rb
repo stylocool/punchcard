@@ -85,7 +85,9 @@ ActiveAdmin.register Punchcard do
 
       company_setting = punchcard.company.company_setting
 
-      if checkinDistance.round(2) > company_setting.distance_check.to_i
+      puts("Checkin distance: "+checkinDistance.to_s)
+      puts("Check distance: "+company_setting.distance_check.to_s)
+      if checkinDistance.to_i > company_setting.distance_check.to_i
         content_tag(:div, "#{checkinDistance.round(2)} km", style: "color:red")
       else
         content_tag(:div, "#{checkinDistance.round(2)} km")
@@ -102,7 +104,7 @@ ActiveAdmin.register Punchcard do
 
       company_setting = punchcard.company.company_setting
 
-      if checkoutDistance.round(2) > company_setting.distance_check.to_i
+      if checkoutDistance.to_i > company_setting.distance_check.to_i
         content_tag(:div, "#{checkoutDistance.round(2)} km", style: "color:red")
       else
         content_tag(:div, "#{checkoutDistance.round(2)} km")
@@ -110,6 +112,8 @@ ActiveAdmin.register Punchcard do
     end
 
     column :checkout
+
+    column :leave
 
     column :fine do |punchcard|
       "#{number_to_currency(punchcard.fine)}"
@@ -128,7 +132,11 @@ ActiveAdmin.register Punchcard do
       work = PayrollWorkItem.new
       work.punchcard = punchcard
       work.calculate
-      "#{number_to_currency(work.amount)}"
+      if work.amount < 0
+        content_tag(:div, "#{number_to_currency(work.amount)}", style: "color:red")
+      else
+        content_tag(:div, "#{number_to_currency(work.amount)}")
+      end
     end
 
     column :map do |punchcard|
@@ -219,6 +227,7 @@ ActiveAdmin.register Punchcard do
       f.input :checkin, as: :datepicker
       f.input :checkout_location
       f.input :checkout, as: :datepicker
+      f.input :leave, as: :select, collection: { AmLeave: 'Leave (AM)', PmLeave: 'Leave (PM)', Leave: 'Leave (All Day)', MC: 'MC' }
       f.input :fine
       f.input :cancel_pay
     end

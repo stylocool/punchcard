@@ -7,6 +7,7 @@ class CreatePunchcard < ActiveRecord::Migration
       t.string      :checkout_location
       t.integer     :fine
       t.boolean     :cancel_pay
+      t.string      :leave
       t.references  :company, index: true
       t.references  :project, index: true
       t.references  :worker, index: true

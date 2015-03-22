@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150312092111) do
+ActiveRecord::Schema.define(version: 20150322153004) do
 
   create_table "active_admin_comments", force: :cascade do |t|
     t.string   "namespace"
@@ -35,6 +35,10 @@ ActiveRecord::Schema.define(version: 20150312092111) do
     t.string   "telephone"
     t.integer  "total_workers"
     t.datetime "created_at"
+    t.string   "logo_file_name"
+    t.string   "logo_content_type"
+    t.integer  "logo_file_size"
+    t.datetime "logo_updated_at"
   end
 
   create_table "company_settings", force: :cascade do |t|
@@ -90,6 +94,7 @@ ActiveRecord::Schema.define(version: 20150312092111) do
     t.string   "checkout_location"
     t.integer  "fine"
     t.boolean  "cancel_pay"
+    t.string   "leave"
     t.integer  "company_id"
     t.integer  "project_id"
     t.integer  "worker_id"

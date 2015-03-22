@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'puma'
+#gem 'puma'
 gem 'devise'
 gem 'activeadmin', github: 'activeadmin'
 gem 'country_select', github: 'stefanpenner/country_select'
@@ -9,6 +9,7 @@ gem 'cancancan'
 gem 'geokit-rails'
 gem 'prawn-rails'
 gem 'wicked'
+gem 'paperclip'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '4.2.0'

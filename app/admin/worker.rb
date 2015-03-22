@@ -60,7 +60,7 @@ ActiveAdmin.register Worker do
       f.input :name
       f.input :race, as: :select, include_blank: false, collection: { Chinese: "Chinese", Indian: "Indian", Malay: "Malay", Others: "Others" }
       f.input :gender, as: :select, include_blank: false, collection: { Male: "Male", Female: "Female" }
-      f.input :nationality, as: :country
+      f.input :nationality, as: :country, priority_countries: ["SG", "MY", "IN", "ID"]
       f.input :contact
       f.input :work_permit
       f.input :company, as: :select, include_blank: false, collection:
