@@ -20,11 +20,16 @@ ActiveAdmin.register Punchcard do
     #  end
     #end
 
-    def find_resource
+    def show
       @punchcard = Punchcard.where(id: params[:id]).first
+
+      if current_user.role? :Root || :Administrator
+        @versions = @punchcard.versions
+        @punchcard = @punchcard.versions[params[:version].to_i].reify if params[:version]
+      end
+
       if current_user.role? :Root
         @punchcard
-      #elsif current_user.role? :Administrator
       else
         if current_user.current_company.present?
           if @punchcard.company_id == current_user.current_company.id
@@ -36,6 +41,8 @@ ActiveAdmin.register Punchcard do
           :access_denied
         end
       end
+
+      show!
     end
 
     def map
@@ -146,6 +153,20 @@ ActiveAdmin.register Punchcard do
     actions
   end
 
+  sidebar :history, :only => :show do
+    if current_user.role? :Root || :Administrator
+      render "layouts/version"
+    end
+  end
+
+  member_action :history do
+    if current_user.role? :Root || :Administrator
+      @punchcard = Punchcard.find(params[:id])
+      @versions = @punchcard.versions
+      render "layouts/history"
+    end
+  end
+
   filter :company, as: :select, collection: proc {
                    if current_user.role? :Root
                      Company.all.map{|u| ["#{u.name}", u.id]}
@@ -228,7 +249,7 @@ ActiveAdmin.register Punchcard do
       f.input :checkout_location
       f.input :checkout, as: :datepicker
       f.input :leave, as: :select, collection: { AmLeave: 'Leave (AM)', PmLeave: 'Leave (PM)', Leave: 'Leave (All Day)', MC: 'MC' }
-      f.input :fine
+      f.input :fine, :as => :number
       f.input :cancel_pay
     end
     f.actions

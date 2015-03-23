@@ -58,12 +58,12 @@ ActiveAdmin.register CompanySetting do
   form do |f|
       f.inputs "Company Settings Details" do
       f.input :name
-      f.input :working_hours, label: 'Working Hours/Day'
-      f.input :rate, label: 'Daily rate (based on working hours)'
-      f.input :overtime_rate, label: 'Overtime hourly rate (x times of daily hourly rate)'
+      f.input :working_hours, label: 'Working Hours/Day', :as => :number
+      f.input :rate, label: 'Daily rate (based on working hours)', :as => :number
+      f.input :overtime_rate, label: 'Overtime hourly rate (x times of daily hourly rate)', :as => :number
       f.input :lunch_hour, label: '1 hr lunch reduction if start work before 11am'
       f.input :dinner_hour, label: '1 hr dinner reduction if stop work after 10pm'
-      f.input :distance_check, label: 'Distance check in km from project location'
+      f.input :distance_check, label: 'Distance check in km from project location', :as => :number
       f.input :company, as: :select, include_blank: false, collection:
                           if current_user.role? :Root
                             Company.all.map{|u| ["#{u.name}", u.id]}

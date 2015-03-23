@@ -82,8 +82,8 @@ ActiveAdmin.register Company do
       f.input :name
       f.input :address
       f.input :email
-      f.input :telephone
-      f.input :total_workers
+      f.input :telephone, :as => :number
+      f.input :total_workers, :as => :number
       f.input :logo, :required => false
       # can only select current user for all types of users
       #f.input :user, as: :select, collection: User.all.where(:id => current_user.id).map{|u| ["#{u.email}", u.id]}, include_blank: false

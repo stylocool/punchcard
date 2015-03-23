@@ -1,5 +1,6 @@
 class Punchcard < ActiveRecord::Base
-	belongs_to :worker
+  has_paper_trail :on => [:update, :destroy]
+  belongs_to :worker
   belongs_to :project
   belongs_to :company
 end

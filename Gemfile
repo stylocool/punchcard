@@ -1,6 +1,5 @@
 source 'https://rubygems.org'
 
-#gem 'puma'
 gem 'devise'
 gem 'activeadmin', github: 'activeadmin'
 gem 'country_select', github: 'stefanpenner/country_select'
@@ -10,6 +9,7 @@ gem 'geokit-rails'
 gem 'prawn-rails'
 gem 'wicked'
 gem 'paperclip'
+gem 'paper_trail', '~> 4.0.0.beta'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '4.2.0'
@@ -38,6 +38,9 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 
 # Use Unicorn as the app server
 # gem 'unicorn'
+
+# Use Puma as the app server
+#gem 'puma'
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development

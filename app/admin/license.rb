@@ -48,8 +48,8 @@ ActiveAdmin.register License do
   form do |f|
       f.inputs "License Details" do
       f.input :name
-      f.input :total_workers
-      f.input :cost_per_worker
+      f.input :total_workers, :as => :number
+      f.input :cost_per_worker, :as => :number
       f.input :company, as: :select, include_blank: false, collection: Company.all.map{|u| ["#{u.name}", u.id]}
       f.input :expired_at, :as => :datepicker
     end

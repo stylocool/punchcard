@@ -1,0 +1,9 @@
+panel "History" do
+  table_for assigns[:versions] do
+    column :id
+    column 'Modify At', :created_at
+    column 'Modify By', :whodunnit do |version|
+      (User.find(version.whodunnit)).email
+    end
+  end
+end

@@ -1,4 +1,6 @@
 class Company < ActiveRecord::Base
+  has_paper_trail :on => [:update, :destroy]
+
 	COMPANY_STATUSES = ["Active", "Pending", "Suspended"]
 
   has_one :license, dependent: :destroy

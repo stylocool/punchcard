@@ -102,8 +102,8 @@ ActiveAdmin.register Payment do
                               Company.none
                             end
                           end
-      f.input :total_workers
-      f.input :rate_per_month, :readonly => true
+      f.input :total_workers, :as => :number
+      f.input :rate_per_month, :readonly => true, :as => :number
       f.input :months_of_service, as: :select, include_blank: false, collection: ((1..12).map {|i| [i,i] })
       #f.input :amount
       f.input :mode, as: :select, include_blank: false, collection: { InternetBanking: 'Internet Banking', PayPal: 'PayPal'}

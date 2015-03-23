@@ -1,4 +1,5 @@
 class User < ActiveRecord::Base
+  #has_paper_trail :on => [:update, :destroy]
   before_create :set_default_role
 
   # Include default devise modules. Others available are:
