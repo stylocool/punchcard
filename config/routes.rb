@@ -20,6 +20,8 @@ Rails.application.routes.draw do
     put 'payrolls' => 'payrolls#select_dates'
     post 'payrolls' => 'payrolls#view_payroll'
 
+    get 'punchcards/:id/history' => 'punchcards#history'
+
     # map view of punchcard
     get 'punchcards/map/:id' => 'punchcards#map'
 

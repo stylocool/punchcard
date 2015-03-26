@@ -1,5 +1,5 @@
 class Company < ActiveRecord::Base
-  has_paper_trail :on => [:update, :destroy]
+  has_paper_trail :on => [:create, :update, :destroy]
 
 	COMPANY_STATUSES = ["Active", "Pending", "Suspended"]
 
@@ -27,8 +27,16 @@ class Company < ActiveRecord::Base
                         :retina   => '-set colorspace sRGB -strip -sharpen 0x0.5'
                     }
 
+
+  # validations
+  validates :name, :address, :email, :telephone, presence: true
+  validates_format_of :email, :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\z/i
+  validates_format_of :telephone, :with => /([6,8,9])\d{7}/
+  validates :total_workers, presence: true, numericality: { only_integer: true, :greater_than => 0 }
   validates_attachment :logo,
                        :presence => true,
                        :size => { :in => 0..2.megabytes },
                        :content_type => { :content_type => /^image\/(jpeg|png|gif|tiff)$/ }
+
+
 end

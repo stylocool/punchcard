@@ -1,8 +1,9 @@
 ActiveAdmin.register Company do
-  permit_params :name, :address, :email, :telephone, :total_workers, :logo
+  permit_params :name, :address, :email, :telephone, :total_workers, :logo, :_destroy
 
   after_save      :add_user_company
   before_destroy  :remove_user_company
+  after_destroy   :remove_current_company
 
   controller do
     #def index
@@ -40,9 +41,11 @@ ActiveAdmin.register Company do
     end
 
     def add_user_company(company)
-      current_user.current_company = company
-      usercompany = UserCompany.new(company_id: company.id, user_id: current_user.id)
-      usercompany.save
+      if company.id != nil && company.id.to_i > 0
+        current_user.current_company = company
+        usercompany = UserCompany.new(company_id: company.id, user_id: current_user.id)
+        usercompany.save
+      end
     end
 
     def remove_user_company(company)
@@ -50,9 +53,13 @@ ActiveAdmin.register Company do
       return true
     end
 
-    def get_params
-      params.require(:company).permit(:name, :address, :email, :telephone, :total_workers)
+    def remove_current_company(company)
+      current_user.current_company = nil
     end
+
+    #def get_params
+    #  params.require(:company).permit(:name, :address, :email, :telephone, :total_workers)
+    #end
   end
 
 
@@ -84,10 +91,8 @@ ActiveAdmin.register Company do
       f.input :email
       f.input :telephone, :as => :number
       f.input :total_workers, :as => :number
-      f.input :logo, :required => false
-      # can only select current user for all types of users
-      #f.input :user, as: :select, collection: User.all.where(:id => current_user.id).map{|u| ["#{u.email}", u.id]}, include_blank: false
-    end
+      f.input :logo, :required => false, :hint => image_tag(f.company.logo.url(:thumb))
+      end
     f.actions
   end
 

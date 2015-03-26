@@ -21,11 +21,8 @@ class ApplicationController < ActionController::Base
 
   def initialize_user_company
     if current_user.present?
-      logger.debug "Current user: #{current_user.id}"
       usercompany = UserCompany.find_by_user_id(current_user.id)
       if usercompany.present?
-        logger.debug "User company present"
-        logger.debug "Initialize company #{usercompany.company_id}"
         current_user.current_company = Company.find(usercompany.company_id)
       end
     end

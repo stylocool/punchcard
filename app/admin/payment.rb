@@ -1,8 +1,8 @@
 ActiveAdmin.register Payment do
 
-  permit_params :total_workers, :rate_per_month, :months_of_service, :amount, :mode, :reference_number, :company_id, :status, :amount
+  permit_params :total_workers, :rate_per_month, :months_of_service, :amount, :mode, :reference_number, :company_id, :status
 
-  after_create :calculate_amount
+  after_save :calculate_amount
 
   controller do
     #def index
@@ -27,27 +27,38 @@ ActiveAdmin.register Payment do
     end
 
     def calculate_amount(payment)
-      payment.status = "new"
-      payment.amount = payment.total_workers * payment.rate_per_month * payment.months_of_service
-      if payment.save
+      if payment.status.to_s == ""
+        # new payment
+        payment.status = "new"
+        # this is hardcoded for per month
+        payment.rate_per_month = 1
 
-        if payment.mode == :InternetBanking
-          # TODO: e-nets integration
-        elsif @payment.mode == :PayPal
-          # TODO: paypal integration
+        payment.amount = payment.total_workers * payment.rate_per_month * payment.months_of_service
+        if payment.save
+
+          if payment.mode == :InternetBanking
+            # TODO: e-nets integration
+          elsif payment.mode == :PayPal
+            # TODO: paypal integration
+          end
+
+          # send payment details to company email
+          PaymentMailer.send_payment(payment).deliver_now
         end
-
-        # TODO: create payroll
-
-        # send payment details to company email
-        PaymentMailer.send_payment(@payment).deliver_now
+      else
+        # update payment
+        if payment.status.to_s == "new"
+          if payment.reference_number.present?
+            payment.status = "paid"
+          end
+        end
+        payment.save
       end
-
     end
 
-    def update
-      @payment.update(get_params)
-    end
+    #def update
+    #  @payment.update(get_params)
+    #end
 
     def find_resource
       @payment = Payment.where(id: params[:id]).first!
@@ -66,9 +77,9 @@ ActiveAdmin.register Payment do
       end
     end
 
-    def get_params
-      params.require(:payment).permit(:total_workers, :rate_per_month, :months_of_service, :amount, :mode, :reference_number, :company_id, :status, :amount)
-    end
+    #def get_params
+    #  params.require(:payment).permit(:total_workers, :rate_per_month, :months_of_service, :amount, :mode, :reference_number, :company_id, :status)
+    #end
   end
 
   index do
@@ -103,7 +114,7 @@ ActiveAdmin.register Payment do
                             end
                           end
       f.input :total_workers, :as => :number
-      f.input :rate_per_month, :readonly => true, :as => :number
+      #f.input :rate_per_month, :readonly => true, :as => :number
       f.input :months_of_service, as: :select, include_blank: false, collection: ((1..12).map {|i| [i,i] })
       #f.input :amount
       f.input :mode, as: :select, include_blank: false, collection: { InternetBanking: 'Internet Banking', PayPal: 'PayPal'}

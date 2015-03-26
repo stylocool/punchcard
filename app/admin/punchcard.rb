@@ -20,7 +20,7 @@ ActiveAdmin.register Punchcard do
     #  end
     #end
 
-    def show
+    def find_resource
       @punchcard = Punchcard.where(id: params[:id]).first
 
       if current_user.role? :Root || :Administrator

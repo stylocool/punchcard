@@ -1,8 +1,8 @@
 class User < ActiveRecord::Base
-  #has_paper_trail :on => [:update, :destroy]
+  has_paper_trail :on => [:create, :update, :destroy]
   before_create :set_default_role
 
-  # Include default devise modules. Others available are:
+  # Include default users modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable
   devise :database_authenticatable, :registerable, :confirmable,
          :recoverable, :rememberable, :trackable, :validatable
@@ -70,5 +70,6 @@ class User < ActiveRecord::Base
       self.role = 'Administrator'
     end
   end
+
 
 end

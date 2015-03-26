@@ -1,4 +1,4 @@
-include Geokit::Geocoders
+#include Geokit::Geocoders
 
 ActiveAdmin.register Project do
 
@@ -39,12 +39,12 @@ ActiveAdmin.register Project do
     id_column
     column :name
     column :location do |project|
-      projectLocation = project.location.split(',')
-      projectGeoLoc = Geokit::GeoLoc.new(lat:projectLocation[0],lng:projectLocation[1])
+      #projectLocation = project.location.split(',')
+      #projectGeoLoc = Geokit::GeoLoc.new(lat:projectLocation[0],lng:projectLocation[1])
 
-      loc = Geokit::Geocoders::GoogleGeocoder.reverse_geocode projectGeoLoc
+      #loc = Geokit::Geocoders::GoogleGeocoder.reverse_geocode projectGeoLoc
 
-      link_to "#{loc.full_address}", "http://map.google.com/?q=#{project.location}"
+      link_to "View", "http://map.google.com/?q=#{project.location}"
     end
     column :company
     column :created_at
