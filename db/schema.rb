@@ -13,6 +13,9 @@
 
 ActiveRecord::Schema.define(version: 20150323023450) do
 
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
+
   create_table "active_admin_comments", force: :cascade do |t|
     t.string   "namespace"
     t.text     "body"
@@ -24,9 +27,9 @@ ActiveRecord::Schema.define(version: 20150323023450) do
     t.datetime "updated_at"
   end
 
-  add_index "active_admin_comments", ["author_type", "author_id"], name: "index_active_admin_comments_on_author_type_and_author_id"
-  add_index "active_admin_comments", ["namespace"], name: "index_active_admin_comments_on_namespace"
-  add_index "active_admin_comments", ["resource_type", "resource_id"], name: "index_active_admin_comments_on_resource_type_and_resource_id"
+  add_index "active_admin_comments", ["author_type", "author_id"], name: "index_active_admin_comments_on_author_type_and_author_id", using: :btree
+  add_index "active_admin_comments", ["namespace"], name: "index_active_admin_comments_on_namespace", using: :btree
+  add_index "active_admin_comments", ["resource_type", "resource_id"], name: "index_active_admin_comments_on_resource_type_and_resource_id", using: :btree
 
   create_table "companies", force: :cascade do |t|
     t.string   "name"
@@ -53,7 +56,7 @@ ActiveRecord::Schema.define(version: 20150323023450) do
     t.integer  "company_id"
   end
 
-  add_index "company_settings", ["company_id"], name: "index_company_settings_on_company_id"
+  add_index "company_settings", ["company_id"], name: "index_company_settings_on_company_id", using: :btree
 
   create_table "licenses", force: :cascade do |t|
     t.string   "name"
@@ -64,7 +67,7 @@ ActiveRecord::Schema.define(version: 20150323023450) do
     t.integer  "company_id"
   end
 
-  add_index "licenses", ["company_id"], name: "index_licenses_on_company_id"
+  add_index "licenses", ["company_id"], name: "index_licenses_on_company_id", using: :btree
 
   create_table "payments", force: :cascade do |t|
     t.integer  "total_workers"
@@ -85,7 +88,7 @@ ActiveRecord::Schema.define(version: 20150323023450) do
     t.integer  "company_id"
   end
 
-  add_index "projects", ["company_id"], name: "index_projects_on_company_id"
+  add_index "projects", ["company_id"], name: "index_projects_on_company_id", using: :btree
 
   create_table "punchcards", force: :cascade do |t|
     t.datetime "checkin"
@@ -100,9 +103,9 @@ ActiveRecord::Schema.define(version: 20150323023450) do
     t.integer  "worker_id"
   end
 
-  add_index "punchcards", ["company_id"], name: "index_punchcards_on_company_id"
-  add_index "punchcards", ["project_id"], name: "index_punchcards_on_project_id"
-  add_index "punchcards", ["worker_id"], name: "index_punchcards_on_worker_id"
+  add_index "punchcards", ["company_id"], name: "index_punchcards_on_company_id", using: :btree
+  add_index "punchcards", ["project_id"], name: "index_punchcards_on_project_id", using: :btree
+  add_index "punchcards", ["worker_id"], name: "index_punchcards_on_worker_id", using: :btree
 
   create_table "user_companies", force: :cascade do |t|
     t.integer  "user_id"
@@ -134,10 +137,10 @@ ActiveRecord::Schema.define(version: 20150323023450) do
     t.datetime "updated_at"
   end
 
-  add_index "users", ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
-  add_index "users", ["email"], name: "index_users_on_email", unique: true
-  add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
-  add_index "users", ["unlock_token"], name: "index_users_on_unlock_token", unique: true
+  add_index "users", ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true, using: :btree
+  add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
+  add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
+  add_index "users", ["unlock_token"], name: "index_users_on_unlock_token", unique: true, using: :btree
 
   create_table "versions", force: :cascade do |t|
     t.string   "item_type",  null: false
@@ -148,7 +151,7 @@ ActiveRecord::Schema.define(version: 20150323023450) do
     t.datetime "created_at"
   end
 
-  add_index "versions", ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id"
+  add_index "versions", ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id", using: :btree
 
   create_table "workers", force: :cascade do |t|
     t.string   "name"
@@ -162,6 +165,6 @@ ActiveRecord::Schema.define(version: 20150323023450) do
     t.integer  "company_id"
   end
 
-  add_index "workers", ["company_id"], name: "index_workers_on_company_id"
+  add_index "workers", ["company_id"], name: "index_workers_on_company_id", using: :btree
 
 end

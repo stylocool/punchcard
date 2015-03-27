@@ -1,5 +1,5 @@
 ActiveAdmin.register Punchcard do
-  permit_params :company_id, :project_id, :worker_id, :checkin_location, :checkin, :checkout_location, :checkout, :fine, :cancel_pay
+  permit_params :company_id, :project_id, :worker_id, :checkin_location, :checkin, :checkout_location, :checkout, :fine, :cancel_pay, :leave
 
   controller do
 
@@ -41,8 +41,6 @@ ActiveAdmin.register Punchcard do
           :access_denied
         end
       end
-
-      show!
     end
 
     def map
@@ -74,6 +72,14 @@ ActiveAdmin.register Punchcard do
     end
   end
 
+  scope :all, :default => true
+  scope :empty_checkin do |punchcards|
+    punchcards.where('checkin is null')
+  end
+  scope :empty_checkout do |punchcards|
+    punchcards.where('checkout is null')
+  end
+
   index do
 
     selectable_column
@@ -82,52 +88,51 @@ ActiveAdmin.register Punchcard do
     column :project
     column :worker
     column :checkin_location do |punchcard|
+      if punchcard.checkin_location.present?
+        projectLocation = punchcard.project.location.split(',')
+        projectGeoLoc = Geokit::GeoLoc.new(lat:projectLocation[0],lng:projectLocation[1])
 
-      projectLocation = punchcard.project.location.split(',')
-      projectGeoLoc = Geokit::GeoLoc.new(lat:projectLocation[0],lng:projectLocation[1])
+        checkinLocation = punchcard.checkin_location.split(',')
+        checkinGeoLoc = Geokit::GeoLoc.new(lat:checkinLocation[0],lng:checkinLocation[1])
+        checkinDistance = checkinGeoLoc.distance_to(projectGeoLoc, :units => :kms)
 
-      checkinLocation = punchcard.checkin_location.split(',')
-      checkinGeoLoc = Geokit::GeoLoc.new(lat:checkinLocation[0],lng:checkinLocation[1])
-      checkinDistance = checkinGeoLoc.distance_to(projectGeoLoc, :units => :kms)
+        company_setting = punchcard.company.company_setting
 
-      company_setting = punchcard.company.company_setting
-
-      puts("Checkin distance: "+checkinDistance.to_s)
-      puts("Check distance: "+company_setting.distance_check.to_s)
-      if checkinDistance.to_i > company_setting.distance_check.to_i
-        content_tag(:div, "#{checkinDistance.round(2)} km", style: "color:red")
-      else
-        content_tag(:div, "#{checkinDistance.round(2)} km")
+        puts("Checkin distance: "+checkinDistance.to_s)
+        puts("Check distance: "+company_setting.distance_check.to_s)
+        if checkinDistance.to_i > company_setting.distance_check.to_i
+          content_tag(:div, "#{checkinDistance.round(2)} km", style: "color:red")
+        else
+          content_tag(:div, "#{checkinDistance.round(2)} km")
+        end
       end
     end
     column :checkin
     column :checkout_location do |punchcard|
-      projectLocation = punchcard.project.location.split(',')
-      projectGeoLoc = Geokit::GeoLoc.new(lat:projectLocation[0],lng:projectLocation[1])
+      if punchcard.checkout_location.present?
+        projectLocation = punchcard.project.location.split(',')
+        projectGeoLoc = Geokit::GeoLoc.new(lat:projectLocation[0],lng:projectLocation[1])
 
-      checkoutLocation = punchcard.checkout_location.split(',')
-      checkoutGeoLoc = Geokit::GeoLoc.new(lat:checkoutLocation[0],lng:checkoutLocation[1])
-      checkoutDistance = checkoutGeoLoc.distance_to(projectGeoLoc, :units => :kms)
+        checkoutLocation = punchcard.checkout_location.split(',')
+        checkoutGeoLoc = Geokit::GeoLoc.new(lat:checkoutLocation[0],lng:checkoutLocation[1])
+        checkoutDistance = checkoutGeoLoc.distance_to(projectGeoLoc, :units => :kms)
 
-      company_setting = punchcard.company.company_setting
+        company_setting = punchcard.company.company_setting
 
-      if checkoutDistance.to_i > company_setting.distance_check.to_i
-        content_tag(:div, "#{checkoutDistance.round(2)} km", style: "color:red")
-      else
-        content_tag(:div, "#{checkoutDistance.round(2)} km")
+        if checkoutDistance.to_i > company_setting.distance_check.to_i
+          content_tag(:div, "#{checkoutDistance.round(2)} km", style: "color:red")
+        else
+          content_tag(:div, "#{checkoutDistance.round(2)} km")
+        end
       end
     end
-
     column :checkout
-
     column :leave
-
     column :fine do |punchcard|
       "#{number_to_currency(punchcard.fine)}"
     end
 
     column :cancel_pay
-
     column 'Total/Normal/Overtime Hours', :total_hours do |punchcard|
       work = PayrollWorkItem.new
       work.punchcard = punchcard
@@ -248,7 +253,7 @@ ActiveAdmin.register Punchcard do
       f.input :checkin, as: :datepicker
       f.input :checkout_location
       f.input :checkout, as: :datepicker
-      f.input :leave, as: :select, collection: { AmLeave: 'Leave (AM)', PmLeave: 'Leave (PM)', Leave: 'Leave (All Day)', MC: 'MC' }
+      f.input :leave, as: :select, collection: { AmLeave:'Leave (AM)', PmLeave:'Leave (PM)', Leave:'Leave', MC:'MC' }
       f.input :fine, :as => :number
       f.input :cancel_pay
     end

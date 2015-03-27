@@ -5,14 +5,14 @@
       <driver-ref>sqlite.xerial</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
-      <jdbc-url>jdbc:sqlite:$PROJECT_DIR$/db/development.sqlite3</jdbc-url>
+      <jdbc-url>jdbc:postgresql:punchcard_development</jdbc-url>
       <libraries />
     </data-source>
     <data-source source="LOCAL" name="Rails activeadmin: test" uuid="ce88f4e8-416d-4800-975e-affdceac066c">
       <driver-ref>sqlite.xerial</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
-      <jdbc-url>jdbc:sqlite:$PROJECT_DIR$/db/test.sqlite3</jdbc-url>
+      <jdbc-url>jdbc:postgresql:punchcard_test</jdbc-url>
       <libraries />
     </data-source>
   </component>

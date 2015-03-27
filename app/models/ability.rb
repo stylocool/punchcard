@@ -10,7 +10,7 @@ class Ability
 
     elsif user.role? :Administrator
 
-      can [:manage], User, :id => user.id
+      can :manage, User
 
       if user.current_company.present?
         can [:read, :update, :destroy], Company, :id => user.current_company.id
@@ -18,21 +18,43 @@ class Ability
         if user.current_company.company_setting.present?
           can [:read, :update, :destroy], CompanySetting, :id => user.current_company.company_setting.id
         else
-          can [:manage], CompanySetting
+          can :manage, CompanySetting
         end
 
-        can [:read], License, :company_id => user.current_company.id
+        can :read, License, :company_id => user.current_company.id
 
         payments = Payment.where(:company_id => user.current_company.id);
-        if payments.present? && payments.count > 0
-          can [:manage], Payment, :company_id => user.current_company.id
+        if payments.present? #&& payments.count > 0
+          can [:read, :update, :destroy], Payment, :company_id => user.current_company.id
+          can :create, Payment
         else
-          can [:manage], Payment
+          can :manage, Payment
         end
 
-        can [:create, :read, :update, :destroy], Project, :company_id => user.current_company.id
-        can [:create, :read, :update, :destroy], Punchcard, :company_id => user.current_company.id
-        can [:create, :read, :update, :destroy], Worker, :company_id => user.current_company.id
+        projects = Project.find_by_company_id(user.current_company.id)
+        if projects.present? #&& projects.count > 0
+          can [:read, :update, :destroy], Project, :company_id => user.current_company.id
+          can :create, Project
+        else
+          can :manage, Project
+        end
+
+        punchcards = Punchcard.find_by_company_id(user.current_company.id)
+        if punchcards.present? #&& punchcards.count > 0
+          can [:read, :update, :destroy], Punchcard, :company_id => user.current_company.id
+          can :create, Punchcard
+        else
+          can :manage, Punchcard
+        end
+
+        workers = Worker.find_by_company_id(user.current_company.id)
+        if workers.present? #&& workers.count > 0
+          can [:read, :update, :destroy], Worker, :company_id => user.current_company.id
+          can :create, Worker
+        else
+          can :manage, Worker
+        end
+
         can :manage, ActiveAdmin::Page, :name => "Payrolls", :namespace_name => "admin"
 
       else

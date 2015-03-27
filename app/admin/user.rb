@@ -16,7 +16,7 @@ ActiveAdmin.register User do
           if current_user.current_company.present?
             @users = User.where("id in (select user_id from user_companies where company_id = ?)", current_user.current_company.id).page(params[:page])
           else
-            @users = User.find(:id => current_user.id)
+            @users = User.where(:id => current_user.id).page(params[:page])
           end
 
           #if @user.present?
@@ -139,7 +139,7 @@ ActiveAdmin.register User do
       if current_user.role? :Root
         f.input :role, as: :radio, collection: { Root: "Root", Administrator: "Administrator" }
       elsif current_user.role? :Administrator
-        f.input :role, as: :radio, collection: { User: "User" }
+        f.input :role, as: :radio, collection: { Administrator: "Administrator", User: "User" }
       end
     f.actions
     end

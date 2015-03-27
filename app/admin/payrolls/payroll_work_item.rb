@@ -18,6 +18,39 @@ class PayrollWorkItem
     checkin = punchcard.checkin
     checkout = punchcard.checkout
 
+    unless checkin.present?
+      # check leave
+      if punchcard.leave.present?
+        if punchcard.leave == 'Leave (AM)' || punchcard.leave == 'MC'
+          # set checkin to 1pm
+          checkin = checkout.change(hour: 13, minute: 0, second: 0)
+        else
+          # no other valid reason
+          checkin = checkout
+        end
+      else
+        # awol
+        checkin = checkout
+      end
+    end
+    puts checkin.to_s
+    unless checkout.present?
+      # check leave
+      if punchcard.leave.present?
+        if punchcard.leave == 'Leave (PM)' || punchcard.leave == 'MC'
+          # set checkin to 1pm
+          checkout = checkin.change(hour: 13, minute: 0, second: 0)
+        else
+          # no other valid reason
+          checkout = checkin
+        end
+      else
+        # awol
+        checkout = checkin
+      end
+    end
+    puts checkout.to_s
+
     seconds_diff = (checkout - checkin).to_i.abs
     hours = seconds_diff / 3600
     seconds_diff -= hours * 3600
@@ -46,6 +79,7 @@ class PayrollWorkItem
       @overtime_work_hours = hours
     else
       @normal_work_hours = hours
+      @overtime_work_hours = 0
     end
 
     hour_rate = company_setting.rate.to_f / company_setting.working_hours.to_f

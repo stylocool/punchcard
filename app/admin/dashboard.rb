@@ -13,7 +13,7 @@ ActiveAdmin.register_page "Dashboard" do
       columns do
         column do
           panel "Recent Changes" do
-            table_for PaperTrail::Version.order('id desc').limit(20) do # Use PaperTrail::Version if this throws an error
+            table_for PaperTrail::Version.where(:whodunnit => current_user.id).order('id desc').limit(20) do # Use PaperTrail::Version if this throws an error
               column ("Item") { |v| v.item } #, [:admin, v.item] }
               column ("Type") { |v| v.item_type.underscore.humanize }
               column ("Event") { |v| v.event }
