@@ -98,8 +98,6 @@ ActiveAdmin.register Punchcard do
 
         company_setting = punchcard.company.company_setting
 
-        puts("Checkin distance: "+checkinDistance.to_s)
-        puts("Check distance: "+company_setting.distance_check.to_s)
         if checkinDistance.to_i > company_setting.distance_check.to_i
           content_tag(:div, "#{checkinDistance.round(2)} km", style: "color:red")
         else

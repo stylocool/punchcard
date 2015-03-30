@@ -81,5 +81,3 @@ test:
 production:
   <<: *default
   database: punchcard_production
-  username: punchcard
-  password: punchcard
