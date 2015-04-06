@@ -1,5 +1,5 @@
 class Worker < ActiveRecord::Base
-  has_paper_trail :on => [:update, :destroy]
+  has_paper_trail :on => [:create, :update, :destroy]
   GENDERS = ["Male", "Female"]
   RACES = ["Chinese", "Indian", "Malay", "Others"]
   WORKER_TYPES = ["Worker", "Supervisor"]
