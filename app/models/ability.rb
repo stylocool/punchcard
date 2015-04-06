@@ -76,7 +76,7 @@ class Ability
 
         projects = Project.find_by_company_id(user.current_company.id)
         if projects.present?
-          can [:read, :update], Project, :company_id => user.current_company.id
+          can [:read], Project, :company_id => user.current_company.id
         end
 
         punchcards = Punchcard.find_by_company_id(user.current_company.id)
@@ -89,14 +89,13 @@ class Ability
 
         workers = Worker.find_by_company_id(user.current_company.id)
         if workers.present?
-          can [:read, :update], Worker, :company_id => user.current_company.id
+          can [:read], Worker, :company_id => user.current_company.id
         end
 
         can :manage, ActiveAdmin::Page, :name => "Payrolls", :namespace_name => "admin"
 
       end
-
+      can :read, ActiveAdmin::Page, :name => "Dashboard"
     end
-
   end
 end
