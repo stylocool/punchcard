@@ -3,6 +3,17 @@ class Api::SessionsController < Devise::SessionsController
   skip_authorization_check only: [:create, :failure, :show_current_user, :options, :new]
   respond_to :json
 
+  def user_for_paper_trail
+    if current_user.present?
+      current_user.id
+    else
+      user = User.find_by_email(params[:email])
+      if user.present?
+        user.id
+      end
+    end
+  end
+
   def new
     self.resource = resource_class.new(sign_in_params)
     clean_up_passwords(resource)
@@ -38,7 +49,6 @@ class Api::SessionsController < Devise::SessionsController
 
           if company.license.present?
             if company.license.expired_at > Time.now
-              #sign_in("user", resource)
               sign_in(resource, store: false)
               render :json => { user: { id: resource.id, email: resource.email, :auth_token => resource.authentication_token, :auth_token_expiry => resource.authentication_token_expiry } }, success: true, status: :created
             else
