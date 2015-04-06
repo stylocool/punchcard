@@ -1,5 +1,5 @@
 class PaymentMailer < ActionMailer::Base
-  default from: 'sales@punchcard.com'
+  default from: 'sales.punchcard@gmail.com"'
 
   def send_payment(payment)
     @payment = payment

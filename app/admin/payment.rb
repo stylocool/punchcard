@@ -119,6 +119,10 @@ ActiveAdmin.register Payment do
       #f.input :amount
       f.input :mode, as: :select, include_blank: false, collection: { InternetBanking: 'Internet Banking', PayPal: 'PayPal'}
       f.input :reference_number
+
+      if current_user.role? :Root
+        f.input :status, as: :select, include_blank: false, collection: { Acknowledged: 'ack' }
+      end
     end
     f.actions
   end

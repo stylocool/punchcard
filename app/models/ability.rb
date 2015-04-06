@@ -24,7 +24,7 @@ class Ability
         can :read, License, :company_id => user.current_company.id
 
         payments = Payment.where(:company_id => user.current_company.id);
-        if payments.present? #&& payments.count > 0
+        if payments.present?
           can [:read, :update, :destroy], Payment, :company_id => user.current_company.id
           can :create, Payment
         else
@@ -32,7 +32,7 @@ class Ability
         end
 
         projects = Project.find_by_company_id(user.current_company.id)
-        if projects.present? #&& projects.count > 0
+        if projects.present?
           can [:read, :update, :destroy], Project, :company_id => user.current_company.id
           can :create, Project
         else
@@ -40,7 +40,7 @@ class Ability
         end
 
         punchcards = Punchcard.find_by_company_id(user.current_company.id)
-        if punchcards.present? #&& punchcards.count > 0
+        if punchcards.present?
           can [:read, :update, :destroy], Punchcard, :company_id => user.current_company.id
           can :create, Punchcard
         else
@@ -48,7 +48,7 @@ class Ability
         end
 
         workers = Worker.find_by_company_id(user.current_company.id)
-        if workers.present? #&& workers.count > 0
+        if workers.present?
           can [:read, :update, :destroy], Worker, :company_id => user.current_company.id
           can :create, Worker
         else
@@ -64,20 +64,38 @@ class Ability
       can :read, ActiveAdmin::Page, :name => "Dashboard"
 
     else
-      # normal user
+
       can [:read, :update], User, :id => user.id
 
-      can [:read], Company, :id => user.current_company.id if user.current_company.present?
+      if user.current_company.present?
+        can [:read], Company, :id => user.current_company.id
 
-      can [:read], CompanySetting, :id => user.current_company.id if user.current_company.present?
+        if user.current_company.company_setting.present?
+          can [:read], CompanySetting, :id => user.current_company.company_setting.id
+        end
 
-      can [:read], Project, :company_id => user.current_company.id if user.current_company.present?
+        projects = Project.find_by_company_id(user.current_company.id)
+        if projects.present?
+          can [:read, :update], Project, :company_id => user.current_company.id
+        end
 
-      can [:create, :read], Punchcard, :company_id => user.current_company.id if user.current_company.present?
+        punchcards = Punchcard.find_by_company_id(user.current_company.id)
+        if punchcards.present?
+          can [:read], Punchcard, :company_id => user.current_company.id
+          can :create, Punchcard
+        else
+          can :manage, Punchcard
+        end
 
-      can [:create, :read], Worker, :company_id => user.current_company.id if user.current_company.present?
+        workers = Worker.find_by_company_id(user.current_company.id)
+        if workers.present?
+          can [:read, :update], Worker, :company_id => user.current_company.id
+        end
 
-      can :read, ActiveAdmin::Page, :name => "Dashboard"
+        can :manage, ActiveAdmin::Page, :name => "Payrolls", :namespace_name => "admin"
+
+      end
+
     end
 
   end

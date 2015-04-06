@@ -88,7 +88,7 @@ Rails.application.configure do
       password:             "jas311095on!",
       authentication:       "plain",
       enable_starttls_auto: true  }
-  config.action_mailer.default_url_options = {:host => "localhost:3000"}
+  config.action_mailer.default_url_options = {:host => ENV["HOST"]}
   Paperclip.options[:command_path] = "/usr/local/bin/"
 
 end
