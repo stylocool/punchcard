@@ -21,7 +21,7 @@ class Api::WorkersController < ApplicationController
       @worker.race = ""
       @worker.gender = ""
       @worker.nationality = ""
-      @worker.contact = ""
+      @worker.contact = "UNKNOWN"
       @worker.work_permit = params[:id]
       @worker.worker_type = "worker"
       @worker.company_id = company.id
