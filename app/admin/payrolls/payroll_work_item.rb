@@ -2,7 +2,7 @@ class PayrollWorkItem
   include ActiveModel::Model
   include ActiveModel::Validations
 
-  attr_accessor :punchcard, :total_hours, :normal_work_hours, :overtime_work_hours, :amount, :amount_normal, :amount_overtime, :amount_deduction, :remarks
+  attr_accessor :punchcard, :date, :total_hours, :normal_work_hours, :overtime_work_hours, :amount, :amount_normal, :amount_overtime, :amount_deduction, :remarks
 
   #def initialize(punchcard)
   #  @punchcard = punchcard

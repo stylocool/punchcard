@@ -42,9 +42,12 @@ ActiveAdmin.register Company do
 
     def add_user_company(company)
       if company.id != nil && company.id.to_i > 0
-        current_user.current_company = company
-        usercompany = UserCompany.new(company_id: company.id, user_id: current_user.id)
-        usercompany.save
+        exist = UserCompany.find(company_id: company.id, user_id: current_user.id)
+        unless exist.present?
+          current_user.current_company = company
+          usercompany = UserCompany.new(company_id: company.id, user_id: current_user.id)
+          usercompany.save
+        end
       end
     end
 
@@ -66,11 +69,21 @@ ActiveAdmin.register Company do
   index do
     selectable_column
     id_column
-    column :name
-    column :address
-    column :email
-    column :telephone
-    column :total_workers
+    column :name do |company|
+      best_in_place company, :name, :type => :input, :path =>[:admin, company]
+    end
+    column :address do |company|
+      best_in_place company, :address, :type => :textarea, :path =>[:admin, company]
+    end
+    column :email do |company|
+      best_in_place company, :email, :type => :input, :path =>[:admin, company]
+    end
+    column :telephone do |company|
+      best_in_place company, :telephone, :type => :input, :path =>[:admin, company]
+    end
+    column :total_workers do |company|
+      best_in_place company, :total_workers, :type => :input, :path =>[:admin, company]
+    end
     column 'Logo', :photo do |company|
       image_tag(company.logo.url(:thumb), :height => '100')
     end

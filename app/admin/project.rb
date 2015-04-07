@@ -37,13 +37,10 @@ ActiveAdmin.register Project do
   index do
     selectable_column
     id_column
-    column :name
+    column :name do |project|
+      best_in_place project, :name, :type => :input, :path =>[:admin, project]
+    end
     column :location do |project|
-      #projectLocation = project.location.split(',')
-      #projectGeoLoc = Geokit::GeoLoc.new(lat:projectLocation[0],lng:projectLocation[1])
-
-      #loc = Geokit::Geocoders::GoogleGeocoder.reverse_geocode projectGeoLoc
-
       link_to "View", "http://map.google.com/?q=#{project.location}"
     end
     column :company

@@ -35,14 +35,26 @@ ActiveAdmin.register Worker do
   index do
     selectable_column
     id_column
-    column :name
-    column :race
-    column :gender
+    column :name do |worker|
+      best_in_place worker, :name, :type => :input, :path =>[:admin, worker]
+    end
+    column :race do |worker|
+      best_in_place worker, :race, :type => :select, :path =>[:admin, worker], collection: { Chinese: "Chinese", Indian: "Indian", Malay: "Malay", Others: "Others" }
+    end
+    column :gender do |worker|
+      best_in_place worker, :gender, :type => :select, :path =>[:admin, worker], collection: { Male: "Male", Female: "Female" }
+    end
     column :nationality
-    column :contact
-    column :work_permit
+    column :contact do |worker|
+      best_in_place worker, :contact, :type => :input, :path =>[:admin, worker]
+    end
+    column :work_permit do |worker|
+      best_in_place worker, :work_permit, :type => :input, :path =>[:admin, worker]
+    end
     column :company
-    column :worker_type
+    column :worker_type do |worker|
+      best_in_place worker, :worker_type, :type => :select, :path =>[:admin, worker], collection: { Worker: "Worker", Supervisor: "Supervisor" }
+    end
     column :created_at
     actions
   end

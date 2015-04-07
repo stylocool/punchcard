@@ -142,7 +142,6 @@ ActiveAdmin.register Punchcard do
     column :fine do |punchcard|
       "#{number_to_currency(punchcard.fine)}"
     end
-
     column :cancel_pay
     column 'Total/Normal/Overtime Hours', :total_hours do |punchcard|
       work = PayrollWorkItem.new

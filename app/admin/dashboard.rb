@@ -28,7 +28,7 @@ ActiveAdmin.register_page "Dashboard" do
       columns do
         column do
           panel "Recent Changes" do
-            table_for PaperTrail::Version.limit(20) do # Use PaperTrail::Version if this throws an error
+            table_for PaperTrail::Version.order('created_at DESC').limit(20) do # Use PaperTrail::Version if this throws an error
               column ("Item") { |v| v.item } #, [:admin, v.item] }
               column ("Type") { |v| v.item_type.underscore.humanize }
               column ("Event") { |v| v.event }
@@ -61,7 +61,7 @@ ActiveAdmin.register_page "Dashboard" do
                 columns do
                   column do
                     panel "Recent Changes" do
-                      table_for PaperTrail::Version.where("whodunnit in (select user_id::text from user_companies where company_id = "+current_user.current_company.id.to_s+")").limit(20) do # Use PaperTrail::Version if this throws an error
+                      table_for PaperTrail::Version.where("whodunnit in (select user_id::text from user_companies where company_id = "+current_user.current_company.id.to_s+")").order('created_at DESC').limit(20) do # Use PaperTrail::Version if this throws an error
                         column ("Item") { |v| v.item } #, [:admin, v.item] }
                         column ("Type") { |v| v.item_type.underscore.humanize }
                         column ("Event") { |v| v.event }
@@ -123,7 +123,7 @@ ActiveAdmin.register_page "Dashboard" do
       columns do
         column do
           panel "Recent Changes" do
-            table_for PaperTrail::Version.where(:whodunnit => current_user.id).limit(20) do # Use PaperTrail::Version if this throws an error
+            table_for PaperTrail::Version.where(:whodunnit => current_user.id).order('created_at DESC').limit(20) do # Use PaperTrail::Version if this throws an error
               column ("Item") { |v| v.item } #, [:admin, v.item] }
               column ("Type") { |v| v.item_type.underscore.humanize }
               column ("Event") { |v| v.event }

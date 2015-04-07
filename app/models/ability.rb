@@ -25,10 +25,10 @@ class Ability
 
         payments = Payment.where(:company_id => user.current_company.id);
         if payments.present?
-          can [:read, :update, :destroy], Payment, :company_id => user.current_company.id
+          can [:read, :destroy], Payment, :company_id => user.current_company.id
           can :create, Payment
         else
-          can :manage, Payment
+          can [:create, :read, :destroy], Payment
         end
 
         projects = Project.find_by_company_id(user.current_company.id)
