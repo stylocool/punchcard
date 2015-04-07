@@ -3,37 +3,35 @@ ActiveAdmin.register Punchcard do
 
   controller do
 
-    def index
-      index! do |format|
+#    def index
+#      index! do |format|
 
-        if current_user.role? :Root
-          @punchcards = Punchcard.all.page(params[:page])
+#        if current_user.role? :Root
+#          @punchcards = Punchcard.all.page(params[:page])
 
-          @punchcards.each do |punchcard|
-            punchcard.work = PayrollWorkItem.new
-            punchcard.work.punchcard = punchcard
-            punchcard.work.calculate
-          end
+#          @punchcards.each do |punchcard|
+#            punchcard.work = PayrollWorkItem.new
+#            punchcard.work.punchcard = punchcard
+#            punchcard.work.calculate
+#          end
 
-        #elsif current_user.role? :Administrator
+#        else
+#          if current_user.current_company.present?
+#            @punchcards = Punchcard.where(:company_id => current_user.current_company.id).page(params[:page])
 
-        else
-          if current_user.current_company.present?
-            @punchcards = Punchcard.where(:company_id => current_user.current_company.id).page(params[:page])
+#            @punchcards.each do |punchcard|
+#              punchcard.work = PayrollWorkItem.new
+#              punchcard.work.punchcard = punchcard
+#              punchcard.work.calculate
+#            end
 
-            @punchcards.each do |punchcard|
-              punchcard.work = PayrollWorkItem.new
-              punchcard.work.punchcard = punchcard
-              punchcard.work.calculate
-            end
-
-          else
-            @punchcards = Punchcard.none
-          end
-        end
-        format.html
-      end
-    end
+#          else
+#            @punchcards = Punchcard.none
+#          end
+#        end
+#        format.html
+#      end
+#    end
 
     def find_resource
       @punchcard = Punchcard.where(id: params[:id]).first
@@ -147,20 +145,20 @@ ActiveAdmin.register Punchcard do
 
     column :cancel_pay
     column 'Total/Normal/Overtime Hours', :total_hours do |punchcard|
-      #work = PayrollWorkItem.new
-      #work.punchcard = punchcard
-      #work.calculate
-      "#{punchcard.work.total_hours} / #{punchcard.work.normal_work_hours} / #{punchcard.work.overtime_work_hours}"
+      work = PayrollWorkItem.new
+      work.punchcard = punchcard
+      work.calculate
+      "#{work.total_hours} / #{work.normal_work_hours} / #{work.overtime_work_hours}"
     end
 
     column :amount do |punchcard|
-      #work = PayrollWorkItem.new
-      #work.punchcard = punchcard
-      #work.calculate
-      if punchcard.work.amount < 0
-        content_tag(:div, "#{number_to_currency(punchcard.work.amount)}", style: "color:red")
+      work = PayrollWorkItem.new
+      work.punchcard = punchcard
+      work.calculate
+      if work.amount < 0
+        content_tag(:div, "#{number_to_currency(work.amount)}", style: "color:red")
       else
-        content_tag(:div, "#{number_to_currency(punchcard.work.amount)}")
+        content_tag(:div, "#{number_to_currency(work.amount)}")
       end
     end
 
@@ -169,10 +167,10 @@ ActiveAdmin.register Punchcard do
     end
 
     column :remarks do |punchcard|
-      #work = PayrollWorkItem.new
-      #work.punchcard = punchcard
-      #work.calculate
-      content_tag(:div, "#{punchcard.work.remarks}", style: "color:red")
+      work = PayrollWorkItem.new
+      work.punchcard = punchcard
+      work.calculate
+      content_tag(:div, "#{work.remarks}", style: "color:red")
     end
 
     actions
