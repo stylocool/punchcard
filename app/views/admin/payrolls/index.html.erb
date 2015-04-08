@@ -1,10 +1,10 @@
 <div id="active_admin_content" class="without_sidebar">
   <div id="main_content_wrapper">
     <div id="main_content">
-<%= form_for(@payroll, :url => '/admin/payrolls', :method => :put) do |f| %>
+        <%= form_for(@payroll, :url => '/admin/payrolls', :method => :put) do |f| %>
           <fieldset class="inputs"><legend><span>Select Payroll Type</span></legend>
             <ol>
-              <li class="string input optional stringish" id="company_setting_name_input">
+              <li class="string input optional stringish">
                 <label for="payroll_type" class="label">Payroll Type</label>
                 <select name="payroll[type]" id="payroll[type]">
                   <!--<option value="Company">Company</option>-->
@@ -20,7 +20,7 @@
               </li>
             </ol>
           </fieldset>
-<% end %>
+        <% end %>
     </div>
   </div>
 </div>

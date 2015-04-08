@@ -1,0 +1,30 @@
+<div id="active_admin_content" class="without_sidebar">
+  <div id="main_content_wrapper">
+    <div id="main_content">
+      <%= form_for(@report, :url => '/admin/reports', :method => :post) do |f| %>
+          <fieldset class="inputs"><legend><span>Select Report</span></legend>
+            <ol>
+              <li class="string input optional stringish" id="report_report_name_input">
+                <%= f.label :report_name, 'Reports' %>
+                <select name="report[report_name]" id="[report_report_name]">
+                  <option value="Daily Punchcards">Daily Punchcards</option>
+                  <option value="Daily User Logins">Daily User Logins</option>
+                </select>
+              </li>
+              <li class="string input optional stringish" id="payroll_start_input">
+                <%= f.label :period, 'Period' %>
+                <%= f.date_select :period, {:discard_day => true} %>
+              </li>
+            </ol>
+          </fieldset>
+          <fieldset class="actions">
+            <ol>
+              <li class="action input_action " id="report_submit_action">
+                <input type="submit" name="commit" value="Next" />
+              </li>
+            </ol>
+          </fieldset>
+      <% end %>
+    </div>
+  </div>
+</div>

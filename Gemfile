@@ -12,6 +12,8 @@ gem 'wicked'
 gem 'paperclip'
 gem 'paper_trail', '~> 4.0.0.beta'
 gem 'best_in_place', github: 'bernat/best_in_place'
+gem 'chartkick'
+gem 'groupdate'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '4.2.0'

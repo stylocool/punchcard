@@ -42,7 +42,12 @@ ActiveAdmin.register Company do
 
     def add_user_company(company)
       if company.id != nil && company.id.to_i > 0
-        exist = UserCompany.find(company_id: company.id, user_id: current_user.id)
+        begin
+          exist = UserCompany.find(company_id: company.id, user_id: current_user.id)
+        rescue ActiveRecord::RecordNotFound => e
+          exist = nil
+        end
+
         unless exist.present?
           current_user.current_company = company
           usercompany = UserCompany.new(company_id: company.id, user_id: current_user.id)

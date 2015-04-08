@@ -1,0 +1,19 @@
+<div id="active_admin_content" class="without_sidebar">
+  <div id="main_content_wrapper">
+    <div id="main_content">
+      <legend><h2><%=@report.report_name%> for <%=@period.strftime("%B %Y")%></h2></legend>
+      <div class="index_content">
+        <%= javascript_include_tag "//www.google.com/jsapi", "chartkick" %>
+        <%
+           case @report.report_name
+        %>
+        <% when 'Daily Punchcards' %>
+            <%= line_chart @metric %>
+        <% when 'Daily User Logins' %>
+            <%= line_chart @metric %>
+
+      <% end %>
+      </div>
+    </div>
+  </div>
+</div>

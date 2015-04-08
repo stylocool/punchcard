@@ -1,7 +1,15 @@
 ActiveAdmin.register Punchcard do
+  before_filter :set_time_zone
+
   permit_params :company_id, :project_id, :worker_id, :checkin_location, :checkin, :checkout_location, :checkout, :fine, :cancel_pay, :leave
 
+
+
   controller do
+
+    def set_time_zone
+      Time.zone = 'Singapore'
+    end
 
 #    def index
 #      index! do |format|
@@ -267,9 +275,9 @@ ActiveAdmin.register Punchcard do
                             end
                           end
       f.input :checkin_location
-      f.input :checkin, as: :datepicker
+      f.input :checkin, as: :datetime_picker
       f.input :checkout_location
-      f.input :checkout, as: :datepicker
+      f.input :checkout, as: :datetime_picker
       f.input :leave, as: :select, collection: { AmLeave:'Leave (AM)', PmLeave:'Leave (PM)', Leave:'Leave', MC:'MC' }
       f.input :fine, :as => :number
       f.input :cancel_pay

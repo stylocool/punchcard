@@ -56,6 +56,7 @@ class Ability
         end
 
         can :manage, ActiveAdmin::Page, :name => "Payrolls", :namespace_name => "admin"
+        can :manage, ActiveAdmin::Page, :name => "Reports", :namespace_name => "admin"
 
       else
         can [:manage], Company
@@ -93,6 +94,7 @@ class Ability
         end
 
         can :manage, ActiveAdmin::Page, :name => "Payrolls", :namespace_name => "admin"
+        can :manage, ActiveAdmin::Page, :name => "Reports", :namespace_name => "admin"
 
       end
       can :read, ActiveAdmin::Page, :name => "Dashboard"
