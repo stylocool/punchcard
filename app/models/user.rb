@@ -1,6 +1,6 @@
 class User < ActiveRecord::Base
   has_paper_trail :on => [:create, :update, :destroy]
-  before_create :set_default_role
+  #before_create :set_default_role
 
   # Include default users modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable
@@ -15,9 +15,9 @@ class User < ActiveRecord::Base
     role.include? r.to_s
   end
 
-  def generate_secure_token_string
-    SecureRandom.urlsafe_base64(25).tr('lIO0', 'sxyz')
-  end
+  #def generate_secure_token_string
+  #  SecureRandom.urlsafe_base64(25).tr('lIO0', 'sxyz')
+  #end
 
   # Sarbanes-Oxley Compliance: http://en.wikipedia.org/wiki/Sarbanes%E2%80%93Oxley_Act
   def password_complexity
@@ -36,40 +36,40 @@ class User < ActiveRecord::Base
 
   def ensure_authentication_token!
     if authentication_token.blank?
-      self.authentication_token = generate_authentication_token
+      self.authentication_token = Token.generate_authentication_token
       self.authentication_token_expiry = 1.day.from_now
     else
       # check expiry
       if (self.authentication_token_expiry.present?)
         if (self.authentication_token_expiry < Time.now)
           # expired
-          self.authentication_token = generate_authentication_token
+          self.authentication_token = Token.generate_authentication_token
           self.authentication_token_expiry = 1.day.from_now
         end
       else
-        self.authentication_token = generate_authentication_token
+        self.authentication_token = Token.generate_authentication_token
         self.authentication_token_expiry = 1.day.from_now
       end
     end
   end
 
-  def generate_authentication_token
-    loop do
-      token = generate_secure_token_string
-      break token unless User.where(authentication_token: token).first
-    end
-  end
+  #def generate_authentication_token
+  #  loop do
+  #    token = generate_secure_token_string
+  #    break token unless User.where(authentication_token: token).first
+  #  end
+  #end
 
   def reset_authentication_token!
-    self.authentication_token = generate_authentication_token
+    self.authentication_token = Token.generate_authentication_token
   end
 
-  private
-  def set_default_role
-    unless self.role.present?
-      self.role = 'Administrator'
-    end
-  end
+  #private
+  #def set_default_role
+  #  unless self.role.present?
+  #    self.role = 'Administrator'
+  #  end
+  #end
 
 
 end

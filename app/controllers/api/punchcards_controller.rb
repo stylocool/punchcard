@@ -16,6 +16,42 @@ class Api::PunchcardsController < ApplicationController
 
   def create
     @punchcard = Punchcard.new(mobile_params)
+
+    # Check if punchcard exist. If yes then update with the latest else create new.
+    if @punchcard.checkin.present?
+      check = @punchcard.checkin.strftime("%Y-%m-%d")
+      exist = Punchcard.where("company_id = ? and project_id = ? and worker_id = ? and (checkin like ? or checkout like ?)", @punchcard.company_id, @punchcard.project_id, @punchcard.worker_id, "#{check}%", "#{check}%")
+      if exist.present?
+        if exist.count == 1
+          exist.checkin = @punchcard.checkin
+          exist.checkin_location = @punchcard.checkin_location
+          if @punchcard.checkout.present?
+            exist.checkout = @punchcard.checkout
+            exist.checkout_location = @punchcard.checkout_location
+          end
+          @punchcard = exist
+        else
+          # should not happen
+        end
+      end
+    elsif @punchcard.checkout.present?
+      check = @punchcard.checkout.strftime("%Y-%m-%d")
+      exist = Punchcard.where("company_id = ? and project_id = ? and worker_id = ? and (checkin like ? or checkout like ?)", @punchcard.company_id, @punchcard.project_id, @punchcard.worker_id, "#{check}%", "#{check}%")
+      if exist.present?
+        if exist.count == 1
+          exist.checkout = @punchcard.checkout
+          exist.checkout_location = @punchcard.checkout_location
+          if @punchcard.checkin.present?
+            exist.checkin = @punchcard.checkin
+            exist.checkin_location = @punchcard.checkin_location
+          end
+          @punchcard = exist
+        else
+          # should not happen
+        end
+      end
+    end
+
     if @punchcard.save
       redirect_to api_punchcard_path(@punchcard)
     end

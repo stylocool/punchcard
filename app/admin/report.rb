@@ -56,7 +56,6 @@ ActiveAdmin.register_page "Reports" do
             item = @items[index]
             @metric.push [item.date.to_s, item.total]
           end
-          puts(@metric)
           @metric
       end
 

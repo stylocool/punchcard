@@ -8,9 +8,9 @@
            case @report.report_name
         %>
         <% when 'Daily Punchcards' %>
-            <%= line_chart @metric %>
+            <%= column_chart @metric %>
         <% when 'Daily User Logins' %>
-            <%= line_chart @metric %>
+            <%= column_chart @metric %>
         <% when 'Daily Payouts' %>
             <%= column_chart @metric %>
       <% end %>

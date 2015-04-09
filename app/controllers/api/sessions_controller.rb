@@ -36,11 +36,11 @@ class Api::SessionsController < Devise::SessionsController
           if (resource.authentication_token_expiry.present?)
             if (resource.authentication_token_expiry < Time.now)
               # expired
-              resource.authentication_token = generate_authentication_token
+              resource.authentication_token = Token.generate_authentication_token
               resource.authentication_token_expiry = 1.day.from_now
             end
           else
-            resource.authentication_token = generate_authentication_token
+            resource.authentication_token = Token.generate_authentication_token
             resource.authentication_token_expiry = 1.day.from_now
           end
 
