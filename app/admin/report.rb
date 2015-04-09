@@ -22,16 +22,42 @@ ActiveAdmin.register_page "Reports" do
 
       @period = Date.new year, month, day
       days = Time.days_in_month(month, year)
-      startDate = DateTime.new year, month, 1, 0, 0, 0
-      endDate = DateTime.new year, month, days, 23, 59, 59
-      @range = startDate..endDate
+      start_date = DateTime.new year, month, 1, 0, 0, 0
+      stop_date = DateTime.new year, month, days, 23, 59, 59
+      #@range = start_date..stop_date
 
       case report_params[:report_name]
         when 'Daily Punchcards'
-          @metric = Punchcard.where("checkin between ? and ?", startDate, endDate).group_by_day(:checkin).count
+          @metric = Punchcard.where("checkin between ? and ?", start_date, stop_date).group_by_day(:checkin).count
         when 'Daily User Logins'
-          @metric = PaperTrail::Version.where("item_type = ? and event = ? and (created_at between ? and ?) and object_changes like ?", "User", "update", startDate, endDate, "%sign_in_count%").group_by_day(:created_at).count
+          @metric = PaperTrail::Version.where("item_type = ? and event = ? and (created_at between ? and ?) and object_changes like ?", "User", "update", start_date, stop_date, "%sign_in_count%").group_by_day(:created_at).count
+        when 'Daily Payouts'
+          @punchcards = Punchcard.where("checkin between ? and ?", start_date, stop_date)
 
+          @items = []
+
+          for index in 0..days-1
+            item = PayrollWorkItem.new
+            item.date = Date.new year, month, index+1
+            item.total = 0.0
+            @items.push item
+          end
+
+          if @punchcards.count > 0
+            @punchcards.each do |punchcard|
+              punchcard.calculate
+              item = @items[punchcard.checkin.day-1]
+              item.total = item.total + punchcard.amount.to_f
+            end
+          end
+
+          @metric = []
+          for index in 0..days-1
+            item = @items[index]
+            @metric.push [item.date.to_s, item.total]
+          end
+          puts(@metric)
+          @metric
       end
 
     end

@@ -67,13 +67,15 @@ ActiveAdmin.register_page "Payrolls" do
           if @punchcards.count > 0
             @days_worked = @punchcards.count
             @punchcards.each do |punchcard|
+              punchcard.calculate
               work = @items[punchcard.checkin.day-1]
               work.punchcard = punchcard
-              work.calculate
-              @amount += work.amount
-              @amount_deduction += work.amount_deduction
-              @amount_normal += work.amount_normal
-              @amount_overtime += work.amount_overtime
+              #work.calculate
+
+              @amount += punchcard.amount
+              @amount_deduction += punchcard.amount_deduction
+              @amount_normal += punchcard.amount_normal
+              @amount_overtime += punchcard.amount_overtime
             end
           end
 
@@ -124,13 +126,15 @@ ActiveAdmin.register_page "Payrolls" do
       if @punchcards.count > 0
         @days_worked = @punchcards.count
         @punchcards.each do |punchcard|
+          punchcard.calculate
           work = @items[punchcard.checkin.day-1]
           work.punchcard = punchcard
-          work.calculate
-          @amount += work.amount
-          @amount_deduction += work.amount_deduction
-          @amount_normal += work.amount_normal
-          @amount_overtime += work.amount_overtime
+          #work.calculate
+
+          @amount += punchcard.amount
+          @amount_deduction += punchcard.amount_deduction
+          @amount_normal += punchcard.amount_normal
+          @amount_overtime += punchcard.amount_overtime
         end
       end
 

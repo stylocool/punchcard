@@ -1,15 +1,8 @@
 ActiveAdmin.register Punchcard do
-  before_filter :set_time_zone
 
   permit_params :company_id, :project_id, :worker_id, :checkin_location, :checkin, :checkout_location, :checkout, :fine, :cancel_pay, :leave
 
-
-
   controller do
-
-    def set_time_zone
-      Time.zone = 'Singapore'
-    end
 
 #    def index
 #      index! do |format|
@@ -102,14 +95,17 @@ ActiveAdmin.register Punchcard do
   end
 
   index do
-
     selectable_column
     id_column
     column :company
     column :project
     column :worker
     column :checkin_location do |punchcard|
+      # calculate
+      punchcard.calculate
+
       if punchcard.checkin_location.present?
+
         projectLocation = punchcard.project.location.split(',')
         projectGeoLoc = Geokit::GeoLoc.new(lat:projectLocation[0],lng:projectLocation[1])
 
@@ -152,20 +148,22 @@ ActiveAdmin.register Punchcard do
     end
     column :cancel_pay
     column 'Total/Normal/Overtime Hours', :total_hours do |punchcard|
-      work = PayrollWorkItem.new
-      work.punchcard = punchcard
-      work.calculate
-      "#{work.total_hours} / #{work.normal_work_hours} / #{work.overtime_work_hours}"
+      #work = PayrollWorkItem.new
+      #work.punchcard = punchcard
+      #work.calculate
+
+      "#{punchcard.total_hours} / #{punchcard.normal_work_hours} / #{punchcard.overtime_work_hours}"
     end
 
     column :amount do |punchcard|
-      work = PayrollWorkItem.new
-      work.punchcard = punchcard
-      work.calculate
-      if work.amount < 0
-        content_tag(:div, "#{number_to_currency(work.amount)}", style: "color:red")
+      #work = PayrollWorkItem.new
+      #work.punchcard = punchcard
+      #work.calculate
+
+      if punchcard.amount < 0
+        content_tag(:div, "#{number_to_currency(punchcard.amount)}", style: "color:red")
       else
-        content_tag(:div, "#{number_to_currency(work.amount)}")
+        content_tag(:div, "#{number_to_currency(punchcard.amount)}")
       end
     end
 
@@ -174,10 +172,10 @@ ActiveAdmin.register Punchcard do
     end
 
     column :remarks do |punchcard|
-      work = PayrollWorkItem.new
-      work.punchcard = punchcard
-      work.calculate
-      content_tag(:div, "#{work.remarks}", style: "color:red")
+      #work = PayrollWorkItem.new
+      #work.punchcard = punchcard
+      #work.calculate
+      content_tag(:div, "#{punchcard.remarks}", style: "color:red")
     end
 
     actions

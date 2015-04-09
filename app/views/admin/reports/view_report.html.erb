@@ -11,7 +11,8 @@
             <%= line_chart @metric %>
         <% when 'Daily User Logins' %>
             <%= line_chart @metric %>
-
+        <% when 'Daily Payouts' %>
+            <%= column_chart @metric %>
       <% end %>
       </div>
     </div>
