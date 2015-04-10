@@ -44,8 +44,8 @@ class Api::SessionsController < Devise::SessionsController
             resource.authentication_token_expiry = 1.day.from_now
           end
 
-          usercompany = UserCompany.where(:user_id => resource.id).first
-          company = Company.find(usercompany.company_id)
+          user_company = UserCompany.where(:user_id => resource.id).first
+          company = Company.find(user_company.company_id)
 
           if company.license.present?
             if company.license.expired_at > Time.now

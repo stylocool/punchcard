@@ -101,11 +101,11 @@ class Punchcard < ActiveRecord::Base
         @overtime_work_hours = 0
       end
 
-      hour_rate = self.company.company_setting.rate.to_f / self.company.company_setting.working_hours.to_f
+      hour_rate = self.worker.basic_pay.to_f / self.company.company_setting.working_hours.to_f
       overtime_rate = hour_rate * self.company.company_setting.overtime_rate.to_f
 
       if @normal_work_hours == self.company.company_setting.working_hours.to_f
-        @amount_normal = self.company.company_setting.rate.to_f
+        @amount_normal = self.worker.basic_pay.to_f
       else
         @amount_normal = @normal_work_hours.to_f * hour_rate
       end

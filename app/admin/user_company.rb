@@ -14,15 +14,13 @@ ActiveAdmin.register UserCompany do
   filter :company_id
 
   form do |f|
-    f.inputs "User Company Details" do
+    f.inputs 'User Company Details' do
       f.input :user_id, as: :select, include_blank: false, collection:
-                          User.all.map{|u| ["#{u.email}", u.id]}
+                          User.all.map { |u| ["#{u.email}", u.id] }
 
       f.input :company_id, as: :select, include_blank: false, collection:
-                          Company.all.map{|u| ["#{u.name}", u.id]}
-
+                          Company.all.map { |u| ["#{u.name}", u.id] }
     end
     f.actions
   end
-
 end

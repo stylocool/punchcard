@@ -1,25 +1,10 @@
 ActiveAdmin.register Payment do
-
-  permit_params :total_workers, :rate_per_month, :months_of_service, :amount, :mode, :reference_number, :company_id, :status
+  permit_params :total_workers, :rate_per_month, :months_of_service, :amount,
+                :mode, :reference_number, :company_id, :status
 
   after_save :calculate_amount
 
   controller do
-    #def index
-    #  index! do |format|
-    #    if current_user.role? :Root
-    #      @payments = Payment.all.page(params[:page])
-    #    else
-    #      if current_user.current_company.present?
-    #        @payments = Payment.where(:company_id => current_user.current_company.id).page(params[:page])
-    #      else
-    #        @payments = Payment.none
-    #      end
-    #    end
-    #    format.html
-    #  end
-    #end
-
     def new
       @payment = Payment.new
       @payment.total_workers = current_user.current_company.total_workers
@@ -27,59 +12,39 @@ ActiveAdmin.register Payment do
     end
 
     def calculate_amount(payment)
-      if payment.status.to_s == ""
+      if payment.status.to_s == ''
         # new payment
-        payment.status = "new"
+        payment.status = 'new'
         # this is hardcoded for per month
         payment.rate_per_month = 1
-
-        payment.amount = payment.total_workers * payment.rate_per_month * payment.months_of_service
+        payment.amount = payment.total_workers * payment.rate_per_month *
+          payment.months_of_service
         if payment.save
-
-          if payment.mode == :InternetBanking
-            # TODO: e-nets integration
-          elsif payment.mode == :PayPal
-            # TODO: paypal integration
-          end
-
+          # TODO: payment gateway
           # send payment details to company email
           PaymentMailer.send_payment(payment).deliver_now
         end
       else
         # update payment
-        if payment.status.to_s == "new"
-          if payment.reference_number.present?
-            payment.status = "paid"
-          end
-        end
+        payment.status = 'paid' if
+          payment.status.to_s == 'new' && payment.reference_number.present?
         payment.save
       end
     end
 
-    #def update
-    #  @payment.update(get_params)
-    #end
-
     def find_resource
       @payment = Payment.where(id: params[:id]).first!
-      if current_user.role? :Root
-        @payment
-      else
-        if current_user.current_company.present?
-          if @payment.company_id == current_user.current_company.id
-            @payment
-          else
-            :access_denied
-          end
+      return @payment if current_user.role? :Root
+      if current_user.current_company.present?
+        if @payment.company_id == current_user.current_company.id
+          @payment
         else
           :access_denied
         end
+      else
+        :access_denied
       end
     end
-
-    #def get_params
-    #  params.require(:payment).permit(:total_workers, :rate_per_month, :months_of_service, :amount, :mode, :reference_number, :company_id, :status)
-    #end
   end
 
   index do
@@ -101,30 +66,26 @@ ActiveAdmin.register Payment do
   filter :status
 
   form do |f|
-      f.inputs "Payment Details" do
+    f.inputs 'Payment Details' do
       f.input :company, as: :select, include_blank: false, collection:
-                          if current_user.role? :Root
-                            Company.all.map{|u| ["#{u.name}", u.id]}
-                          elsif current_user.role? :Administrator
-                            usercompany = UserCompany.find_by_user_id(current_user.id)
-                            if usercompany.present?
-                              Company.all.where(:id => usercompany.company_id).map{|u| ["#{u.name}", u.id]}
-                            else
-                              Company.none
-                            end
-                          end
-      f.input :total_workers, :as => :number
-      #f.input :rate_per_month, :readonly => true, :as => :number
-      f.input :months_of_service, as: :select, include_blank: false, collection: ((1..12).map {|i| [i,i] })
-      #f.input :amount
+        if current_user.role? :Root
+          Company.all.map { |u| ["#{u.name}", u.id] }
+        elsif current_user.role? :Administrator
+          user_company = UserCompany.find_by_user_id(current_user.id)
+          if user_company.present?
+            Company.all.where(id: user_company.company_id).map { |u| ["#{u.name}", u.id] }
+          else
+            Company.none
+          end
+        end
+      f.input :total_workers, as: :number
+      f.input :months_of_service, as: :select, include_blank: false, collection: ((1..12).map { |i| [i, i] })
       f.input :mode, as: :select, include_blank: false, collection: { InternetBanking: 'Internet Banking', PayPal: 'PayPal'}
       f.input :reference_number
-
       if current_user.role? :Root
         f.input :status, as: :select, include_blank: false, collection: { Acknowledged: 'ack' }
       end
     end
     f.actions
   end
-
 end

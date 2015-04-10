@@ -14,6 +14,7 @@ gem 'paper_trail', '~> 4.0.0.beta'
 gem 'best_in_place', github: 'bernat/best_in_place'
 gem 'chartkick'
 gem 'groupdate'
+gem 'activerecord-session_store'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '4.2.0'
@@ -59,6 +60,7 @@ group :development, :test do
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   gem 'spring'
 
+  gem 'rubocop', require: false
   gem 'rspec-rails'
   gem 'shoulda', require: false
   gem 'factory_girl_rails'

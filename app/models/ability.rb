@@ -63,7 +63,7 @@ class Ability
       end
 
       can :read, ActiveAdmin::Page, :name => "Dashboard"
-
+      can [:read, :destroy], Session
     else
 
       can [:read, :update], User, :id => user.id
@@ -94,7 +94,6 @@ class Ability
         end
 
         can :manage, ActiveAdmin::Page, :name => "Payrolls", :namespace_name => "admin"
-        can :manage, ActiveAdmin::Page, :name => "Reports", :namespace_name => "admin"
 
       end
       can :read, ActiveAdmin::Page, :name => "Dashboard"

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150322153004) do
+ActiveRecord::Schema.define(version: 20150410172750) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -46,7 +46,6 @@ ActiveRecord::Schema.define(version: 20150322153004) do
 
   create_table "company_settings", force: :cascade do |t|
     t.string   "name"
-    t.float    "rate"
     t.float    "overtime_rate"
     t.integer  "working_hours"
     t.boolean  "lunch_hour"
@@ -107,6 +106,16 @@ ActiveRecord::Schema.define(version: 20150322153004) do
   add_index "punchcards", ["project_id"], name: "index_punchcards_on_project_id", using: :btree
   add_index "punchcards", ["worker_id"], name: "index_punchcards_on_worker_id", using: :btree
 
+  create_table "sessions", force: :cascade do |t|
+    t.string   "session_id", null: false
+    t.text     "data"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "sessions", ["session_id"], name: "index_sessions_on_session_id", unique: true, using: :btree
+  add_index "sessions", ["updated_at"], name: "index_sessions_on_updated_at", using: :btree
+
   create_table "user_companies", force: :cascade do |t|
     t.integer  "user_id"
     t.integer  "company_id"
@@ -164,6 +173,8 @@ ActiveRecord::Schema.define(version: 20150322153004) do
     t.string   "worker_type"
     t.datetime "created_at"
     t.integer  "company_id"
+    t.string   "trade"
+    t.float    "basic_pay"
   end
 
   add_index "workers", ["company_id"], name: "index_workers_on_company_id", using: :btree
