@@ -17,6 +17,7 @@ class Api::CompaniesController < ApplicationController
   def index
     #if current_user.present?
       usercompany = UserCompany.where(:user_id => current_user.id).first
+      @server_time = Time.now
       @company = Company.find(usercompany.company_id)
     #end
   end

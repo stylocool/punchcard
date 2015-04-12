@@ -37,15 +37,15 @@ ActiveAdmin.register Punchcard do
       checkin_geo_loc = Geokit::GeoLoc.new(lat: @checkin_lat, lng: @checkin_lng)
       checkout_geo_loc = Geokit::GeoLoc.new(lat: @checkout_lat, lng: @checkout_lng)
 
-      checkin_address = Geokit::Geocoders::GoogleGeocoder.reverse_geocode(checkin_geo_loc)
-      checkout_address = Geokit::Geocoders::GoogleGeocoder.reverse_geocode(checkout_geo_loc)
+      #checkin_address = Geokit::Geocoders::GoogleGeocoder.reverse_geocode(checkin_geo_loc)
+      #checkout_address = Geokit::Geocoders::GoogleGeocoder.reverse_geocode(checkout_geo_loc)
 
       checkin_distance = checkin_geo_loc.distance_to(project_geo_loc, units: :kms)
       checkout_distance = checkout_geo_loc.distance_to(project_geo_loc, units: :kms)
 
       @project_title = "Project #{punchcard.project.name}"
-      @checkin_title = "Checkin @ #{checkin_address.full_address} - #{punchcard.checkin} - #{checkin_distance.round(2)} km"
-      @checkout_title = "Checkin @ #{checkout_address.full_address} - #{punchcard.checkout} - #{checkout_distance.round(2)} km"
+      @checkin_title = "Checkin @ #{punchcard.checkin} - #{checkin_distance.round(2)} km"
+      @checkout_title = "Checkout @ #{punchcard.checkout} - #{checkout_distance.round(2)} km"
     end
   end
 
@@ -68,17 +68,15 @@ ActiveAdmin.register Punchcard do
       punchcard.calculate
 
       if punchcard.checkin_location.present?
-
         project_location = punchcard.project.location.split(',')
         project_geo_loc = Geokit::GeoLoc.new(lat: project_location[0], lng: project_location[1])
-
         checkin_location = punchcard.checkin_location.split(',')
         checkin_geo_loc = Geokit::GeoLoc.new(lat: checkin_location[0], lng: checkin_location[1])
         checkin_distance = checkin_geo_loc.distance_to(project_geo_loc, units: :kms)
-        checkin_address = Geokit::Geocoders::GoogleGeocoder.reverse_geocode(checkin_geo_loc)
-
         company_setting = punchcard.company.company_setting
-        checkin_distance.to_i > company_setting.distance_check.to_i ? content_tag(:div, "#{checkin_address.full_address} (#{checkin_distance.round(2)} km)", style: 'color:red') : content_tag(:div, "#{checkin_address.full_address} (#{checkin_distance.round(2)} km)")
+        checkin_distance.to_i > company_setting.distance_check.to_i ?
+          content_tag(:div, "#{checkin_distance.round(2)} km", style: 'color:red') :
+          content_tag(:div, "#{checkin_distance.round(2)} km")
       end
     end
     column :checkin
@@ -86,14 +84,13 @@ ActiveAdmin.register Punchcard do
       if punchcard.checkout_location.present?
         project_location = punchcard.project.location.split(',')
         project_geo_loc = Geokit::GeoLoc.new(lat: project_location[0], lng: project_location[1])
-
         checkout_location = punchcard.checkout_location.split(',')
         checkout_geo_loc = Geokit::GeoLoc.new(lat: checkout_location[0], lng: checkout_location[1])
         checkout_distance = checkout_geo_loc.distance_to(project_geo_loc, units: :kms)
-        checkout_address = Geokit::Geocoders::GoogleGeocoder.reverse_geocode(checkout_geo_loc)
-
         company_setting = punchcard.company.company_setting
-        checkout_distance.to_i > company_setting.distance_check.to_i ? content_tag(:div, "#{checkout_address.full_address} (#{checkout_distance.round(2)} km)", style: 'color:red') : content_tag(:div, "#{checkout_address.full_address} (#{checkout_distance.round(2)} km)")
+        checkout_distance.to_i > company_setting.distance_check.to_i ?
+          content_tag(:div, "#{checkout_distance.round(2)} km", style: 'color:red') :
+          content_tag(:div, "#{checkout_distance.round(2)} km")
       end
     end
     column :checkout
