@@ -18,9 +18,10 @@ class Api::PunchcardsController < ApplicationController
     @punchcard = Punchcard.new(mobile_params)
 
     # Check if punchcard exist. If yes then update with the latest else create new.
-    if @punchcard.checkin.present?
-      check = @punchcard.checkin.strftime("%Y-%m-%d")
-      exist = Punchcard.where("company_id = ? and project_id = ? and worker_id = ? and (checkin like ? or checkout like ?)", @punchcard.company_id, @punchcard.project_id, @punchcard.worker_id, "#{check}%", "#{check}%")
+    if @punchcard.checkin.present? && !@punchcard.checkout.present?
+      start = @punchcard.checkin.beginning_of_day
+      stop = @punchcard.checkin.end_of_day
+      exist = Punchcard.where("company_id = ? and project_id = ? and worker_id = ? and (checkin between ? and ? or checkout between ? and ?)", @punchcard.company_id, @punchcard.project_id, @punchcard.worker_id, start, stop, start, stop)
       if exist.present?
         if exist.count == 1
           exist.checkin = @punchcard.checkin
@@ -34,9 +35,10 @@ class Api::PunchcardsController < ApplicationController
           # should not happen
         end
       end
-    elsif @punchcard.checkout.present?
-      check = @punchcard.checkout.strftime("%Y-%m-%d")
-      exist = Punchcard.where("company_id = ? and project_id = ? and worker_id = ? and (checkin like ? or checkout like ?)", @punchcard.company_id, @punchcard.project_id, @punchcard.worker_id, "#{check}%", "#{check}%")
+    elsif !@punchcard.checkin.present? && @punchcard.checkout.present?
+      start = @punchcard.checkout.beginning_of_day
+      stop = @punchcard.checkout.end_of_day
+      exist = Punchcard.where("company_id = ? and project_id = ? and worker_id = ? and (checkin between ? and ? or checkout between ? and ?)", @punchcard.company_id, @punchcard.project_id, @punchcard.worker_id, start, stop, start, stop)
       if exist.present?
         if exist.count == 1
           exist.checkout = @punchcard.checkout
@@ -45,6 +47,21 @@ class Api::PunchcardsController < ApplicationController
             exist.checkin = @punchcard.checkin
             exist.checkin_location = @punchcard.checkin_location
           end
+          @punchcard = exist
+        else
+          # should not happen
+        end
+      end
+    else
+      start = @punchcard.checkin.beginning_of_day
+      stop = @punchcard.checkin.end_of_day
+      exist = Punchcard.where("company_id = ? and project_id = ? and worker_id = ? and (checkin between ? and ? or checkout between ? and ?)", @punchcard.company_id, @punchcard.project_id, @punchcard.worker_id, start, stop, start, stop)
+      if exist.present?
+        if exist.count == 1
+          exist.checkin = @punchcard.checkin
+          exist.checkin_location = @punchcard.checkin_location
+          exist.checkout = @punchcard.checkout
+          exist.checkout_location = @punchcard.checkout_location
           @punchcard = exist
         else
           # should not happen
