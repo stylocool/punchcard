@@ -59,10 +59,10 @@ ActiveAdmin.register Worker do
       f.input :work_permit
       f.input :company, as: :select, include_blank: false, collection:
                           if current_user.role? :Root
-                            Company.all.map { |u| ['#{u.name}', u.id] }
+                            Company.all.map { |u| ["#{u.name}", u.id] }
                           elsif current_user.role? :Administrator
                             usercompany = UserCompany.find_by_user_id(current_user.id)
-                            usercompany.present? ? Company.all.where(id: usercompany.company_id).map { |u| ['#{u.name}', u.id] } : Company.none
+                            usercompany.present? ? Company.all.where(id: usercompany.company_id).map { |u| ["#{u.name}", u.id] } : Company.none
                           end
       f.input :worker_type, as: :select, include_blank: false, collection: { Worker: 'Worker', Supervisor: 'Supervisor', Manager: 'Manager', Engineer: 'Engineer', Admin: 'Admin', Purchaser: 'Purchaser', Drafter: 'Drafter', QS: 'QS', Accountant: 'Accountant' }
       f.input :trade, as: :select, include_blank: false, collection: { Fire: 'Fire', Electrical: 'Electrical' }

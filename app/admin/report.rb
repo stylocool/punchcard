@@ -27,9 +27,17 @@ ActiveAdmin.register_page 'Reports' do
       case report_params[:report_name]
       when 'Daily Punchcards'
         if current_user.role? :Root
-          @metric = Punchcard.where('checkin between ? and ?', start_date, stop_date).group_by_day(:checkin).count
+          if (report_params[:project_id].present? && report_params[:project_id].to_i > 0)
+            @metric = Punchcard.where(checkin: start_date..stop_date, project_id: report_params[:project_id].to_i).group_by_day(:checkin).count
+          else
+            @metric = Punchcard.where(checkin: start_date..stop_date).group_by_day(:checkin).count
+          end
         else
-          @metric = Punchcard.where('company_id = ? and checkin between ? and ?', current_user.current_company.id, start_date, stop_date).group_by_day(:checkin).count
+          if (report_params[:project_id].present? && report_params[:project_id].to_i > 0)
+            @metric = Punchcard.where(checkin: start_date..stop_date, company_id: current_user.current_company.id, project_id: report_params[:project_id].to_i).group_by_day(:checkin).count
+          else
+            @metric = Punchcard.where(checkin: start_date..stop_date, company_id: current_user.current_company.id).group_by_day(:checkin).count
+          end
         end
       when 'Daily User Logins'
         if current_user.role? :Root
@@ -40,10 +48,19 @@ ActiveAdmin.register_page 'Reports' do
       when 'Daily Payouts'
 
         if current_user.role? :Root
-          @punchcards = Punchcard.where('checkin between ? and ?', start_date, stop_date)
+          if (report_params[:project_id].present? && report_params[:project_id].to_i > 0)
+            @punchcards = Punchcard.where(checkin: start_date..stop_date, project_id: report_params[:project_id].to_i)
+          else
+            @punchcards = Punchcard.where(checkin: start_date..stop_date)
+          end
         else
-          @punchcards = Punchcard.where('company_id = ? and checkin between ? and ?', current_user.current_company.id, start_date, stop_date)
+          if (report_params[:project_id].present? && report_params[:project_id].to_i > 0)
+            @punchcards = Punchcard.where(company_id: current_user.current_company.id, checkin: start_date..stop_date, project_id: report_params[:project_id].to_i)
+          else
+            @punchcards = Punchcard.where(company_id: current_user.current_company.id, checkin: start_date..stop_date)
+          end
         end
+
         @items = []
 
         (0..days - 1).each do |index|
@@ -71,7 +88,7 @@ ActiveAdmin.register_page 'Reports' do
     end
 
     def model_params
-      params.require(:report).permit(:report_name)
+      params.require(:report).permit(:report_name, :project_id)
     end
   end
 end

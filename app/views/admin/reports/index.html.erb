@@ -1,18 +1,69 @@
+<script>
+    function changeReport() {
+        var reportSelect = document.getElementById('[report_report_name]');
+        if (reportSelect.value == 'Daily Punchcards' || reportSelect.value == 'Daily Payouts') {
+            var list = document.getElementById('list');
+            list.insertBefore(showProjects(), document.getElementById('period'));
+        } else {
+            hideProjects();
+        }
+    }
+
+    function showProjects() {
+
+        var existItem = document.getElementById('li_project');
+        if (existItem == null) {
+            var newListItem = document.createElement('li');
+            newListItem.setAttribute("id", "li_project");
+            newListItem.setAttribute("class", "string input optional stringish");
+
+            var label = document.createElement('label')
+            label.setAttribute("for", "report_project_id")
+            label.innerHTML = "Projects"
+            newListItem.appendChild(label)
+
+            var projectList = document.createElement('select')
+            projectList.setAttribute("name", "report[project_id]");
+            projectList.setAttribute("id", "[report_project_id]");
+
+            projectList.innerHTML = "<option value=\"0\">All projects</option>" +
+                <%
+                  if current_user.role? :Root
+                    projects = Project.all
+                  else
+                    projects = Project.where(company_id: current_user.current_company.id)
+                  end
+                  projects.each do |project|
+                %>
+                "<option value=\"<%=project.id%>\"><%=project.name%></option>";
+                <% end %>
+            newListItem.appendChild(projectList);
+            return newListItem;
+        }
+    }
+
+    function hideProjects() {
+        var list = document.getElementById('list');
+        list.removeChild(document.getElementById('li_project'));
+    }
+</script>
 <div id="active_admin_content" class="without_sidebar">
   <div id="main_content_wrapper">
     <div id="main_content">
       <%= form_for(@report, :url => '/admin/reports', :method => :post) do |f| %>
           <fieldset class="inputs"><legend><span>Select Report</span></legend>
-            <ol>
-              <li class="string input optional stringish" id="report_report_name_input">
+            <ol id="list">
+              <li class="string input optional stringish">
                 <%= f.label :report_name, 'Reports' %>
-                <select name="report[report_name]" id="[report_report_name]">
+                <select name="report[report_name]" id="[report_report_name]" onchange="changeReport()">
+                  <option value="">Select Report</option>
                   <option value="Daily Punchcards">Daily Punchcards</option>
                   <option value="Daily User Logins">Daily User Logins</option>
                   <option value="Daily Payouts">Daily Payouts</option>
                 </select>
               </li>
-              <li class="string input optional stringish" id="payroll_start_input">
+
+              <li class="string input optional stringish" id="period">
                 <%= f.label :period, 'Period' %>
                 <%= f.date_select :period, {:discard_day => true} %>
               </li>
