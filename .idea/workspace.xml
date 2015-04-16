@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34397c06-9160-4a75-8867-56065300fcde" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/api/punchcards_controller.rb" afterPath="$PROJECT_DIR$/app/controllers/api/punchcards_controller.rb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/punchcard.rb" afterPath="$PROJECT_DIR$/app/models/punchcard.rb" />
     </list>
     <ignored path="activeadmin.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -41,11 +41,21 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="punchcards_controller.rb" pinned="false" current-in-tab="true">
+      <file leaf-file-name="punchcards_controller.rb" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/controllers/api/punchcards_controller.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.61218834" vertical-offset="72" max-vertical-offset="1155">
-              <caret line="49" column="193" selection-start-line="49" selection-start-column="193" selection-end-line="49" selection-end-column="193" />
+            <state vertical-scroll-proportion="0.0" vertical-offset="72" max-vertical-offset="1155">
+              <caret line="20" column="67" selection-start-line="20" selection-start-column="67" selection-end-line="20" selection-end-column="67" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="punchcard.rb" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/app/models/punchcard.rb">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.6398892" vertical-offset="192" max-vertical-offset="2295">
+              <caret line="59" column="9" selection-start-line="59" selection-start-column="9" selection-end-line="59" selection-end-column="9" />
               <folding />
             </state>
           </provider>
@@ -103,7 +113,6 @@
         <option value="$PROJECT_DIR$/app/admin/reports/report.rb" />
         <option value="$PROJECT_DIR$/app/views/admin/reports/index.html.erb" />
         <option value="$PROJECT_DIR$/app/admin/report.rb" />
-        <option value="$PROJECT_DIR$/app/models/punchcard.rb" />
         <option value="$PROJECT_DIR$/app/admin/user_company.rb" />
         <option value="$PROJECT_DIR$/app/admin/payment.rb" />
         <option value="$PROJECT_DIR$/app/admin/dashboard.rb" />
@@ -113,6 +122,7 @@
         <option value="$PROJECT_DIR$/app/admin/punchcard.rb" />
         <option value="$PROJECT_DIR$/app/views/admin/punchcards/map.html.erb" />
         <option value="$PROJECT_DIR$/app/controllers/api/punchcards_controller.rb" />
+        <option value="$PROJECT_DIR$/app/models/punchcard.rb" />
       </list>
     </option>
   </component>
@@ -1097,14 +1107,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/punchcard.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.39058173" vertical-offset="12" max-vertical-offset="2235">
-          <caret line="29" column="35" selection-start-line="29" selection-start-column="35" selection-end-line="29" selection-end-column="35" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/views/admin/punchcards/map.html.erb">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.2549575" vertical-offset="0" max-vertical-offset="1080">
@@ -1133,8 +1135,16 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/controllers/api/punchcards_controller.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.61218834" vertical-offset="72" max-vertical-offset="1155">
-          <caret line="49" column="193" selection-start-line="49" selection-start-column="193" selection-end-line="49" selection-end-column="193" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="72" max-vertical-offset="1155">
+          <caret line="20" column="67" selection-start-line="20" selection-start-column="67" selection-end-line="20" selection-end-column="67" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/punchcard.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.6398892" vertical-offset="192" max-vertical-offset="2295">
+          <caret line="59" column="9" selection-start-line="59" selection-start-column="9" selection-end-line="59" selection-end-column="9" />
           <folding />
         </state>
       </provider>

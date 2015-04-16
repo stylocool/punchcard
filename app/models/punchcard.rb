@@ -55,6 +55,10 @@ class Punchcard < ActiveRecord::Base
         end
       end
 
+      if cal_checkin > cal_checkout
+        append_remarks('Checkin is later than Checkout.')
+      end
+
       seconds_diff = (cal_checkout - cal_checkin).to_i.abs
       hours = seconds_diff / 3600
       seconds_diff -= hours * 3600
