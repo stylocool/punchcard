@@ -24,28 +24,34 @@ ActiveAdmin.register Punchcard do
       project_location = punchcard.project.location.split(',')
       @project_lat = project_location[0]
       @project_lng = project_location[1]
-
-      checkin_location = punchcard.checkin_location.split(',')
-      @checkin_lat = checkin_location[0]
-      @checkin_lng = checkin_location[1]
-
-      checkout_location = punchcard.checkout_location.split(',')
-      @checkout_lat = checkout_location[0]
-      @checkout_lng = checkout_location[1]
-
       project_geo_loc = Geokit::GeoLoc.new(lat: @project_lat, lng: @project_lng)
-      checkin_geo_loc = Geokit::GeoLoc.new(lat: @checkin_lat, lng: @checkin_lng)
-      checkout_geo_loc = Geokit::GeoLoc.new(lat: @checkout_lat, lng: @checkout_lng)
+      @project_title = "Project #{punchcard.project.name}"
+
+      if punchcard.checkin.present?
+        checkin_location = punchcard.checkin_location.split(',')
+        @checkin_lat = checkin_location[0]
+        @checkin_lng = checkin_location[1]
+        checkin_geo_loc = Geokit::GeoLoc.new(lat: @checkin_lat, lng: @checkin_lng)
+        checkin_distance = checkin_geo_loc.distance_to(project_geo_loc, units: :kms)
+        @checkin_title = "Checkin @ #{punchcard.checkin} - #{checkin_distance.round(2)} km"
+      else
+
+      end
+
+      if punchcard.checkout.present?
+        checkout_location = punchcard.checkout_location.split(',')
+        @checkout_lat = checkout_location[0]
+        @checkout_lng = checkout_location[1]
+        checkout_geo_loc = Geokit::GeoLoc.new(lat: @checkout_lat, lng: @checkout_lng)
+        checkout_distance = checkout_geo_loc.distance_to(project_geo_loc, units: :kms)
+        @checkout_title = "Checkout @ #{punchcard.checkout} - #{checkout_distance.round(2)} km"
+      else
+
+      end
 
       #checkin_address = Geokit::Geocoders::GoogleGeocoder.reverse_geocode(checkin_geo_loc)
       #checkout_address = Geokit::Geocoders::GoogleGeocoder.reverse_geocode(checkout_geo_loc)
 
-      checkin_distance = checkin_geo_loc.distance_to(project_geo_loc, units: :kms)
-      checkout_distance = checkout_geo_loc.distance_to(project_geo_loc, units: :kms)
-
-      @project_title = "Project #{punchcard.project.name}"
-      @checkin_title = "Checkin @ #{punchcard.checkin} - #{checkin_distance.round(2)} km"
-      @checkout_title = "Checkout @ #{punchcard.checkout} - #{checkout_distance.round(2)} km"
     end
   end
 
@@ -55,6 +61,12 @@ ActiveAdmin.register Punchcard do
   end
   scope :empty_checkout do |punchcards|
     punchcards.where('checkout is null')
+  end
+  scope :cancel_pay do |punchcards|
+    punchcards.where('cancel_pay = true')
+  end
+  scope :fine do |punchcards|
+    punchcards.where('fine > 0')
   end
 
   index do

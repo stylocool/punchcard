@@ -9,6 +9,53 @@ ActiveAdmin.register Worker do
     end
   end
 
+  scope :all, default: true
+  scope :race_chinese do |punchcards|
+    punchcards.where(race: 'Chinese')
+  end
+  scope :race_indian do |punchcards|
+    punchcards.where(race: 'Indian')
+  end
+  scope :race_malay do |punchcards|
+    punchcards.where(race: 'Malay')
+  end
+  scope :race_others do |punchcards|
+    punchcards.where(race: 'Others')
+  end
+  scope :type_accountant do |punchcards|
+    punchcards.where(worker_type: 'Accountant')
+  end
+  scope :type_admin do |punchcards|
+    punchcards.where(worker_type: 'Admin')
+  end
+  scope :type_drafter do |punchcards|
+    punchcards.where(worker_type: 'Drafter')
+  end
+  scope :type_engineer do |punchcards|
+    punchcards.where(worker_type: 'Engineer')
+  end
+  scope :type_manager do |punchcards|
+    punchcards.where(worker_type: 'Manager')
+  end
+  scope :type_purchaser do |punchcards|
+    punchcards.where(worker_type: 'Purchaser')
+  end
+  scope :type_qs do |punchcards|
+    punchcards.where(worker_type: 'QS')
+  end
+  scope :type_supervisor do |punchcards|
+    punchcards.where(worker_type: 'Supervisor')
+  end
+  scope :type_worker do |punchcards|
+    punchcards.where(worker_type: 'Worker')
+  end
+  scope :trade_electrical do |punchcards|
+    punchcards.where(trade: 'Electrical')
+  end
+  scope :trade_fire do |punchcards|
+    punchcards.where(trade: 'Fire')
+  end
+
   index do
     selectable_column
     id_column
@@ -46,8 +93,8 @@ ActiveAdmin.register Worker do
   filter :nationality
   filter :work_permit
   filter :company
-  filter :worker_type, as: :select, collection: { Worker: 'Worker', Supervisor: 'Supervisor', Manager: 'Manager', Engineer: 'Engineer', Admin: 'Admin', Purchaser: 'Purchaser', Drafter: 'Drafter', QS: 'QS', Accountant: 'Accountant' }
-  filter :trade, as: :select, collection: { Fire: 'Fire', Electrical: 'Electrical' }
+  filter :worker_type, as: :select, collection: { Accountant: 'Accountant', Admin: 'Admin', Drafter: 'Drafter', Engineer: 'Engineer', Manager: 'Manager', Purchaser: 'Purchaser', QS: 'QS', Supervisor: 'Supervisor', Worker: 'Worker' }
+  filter :trade, as: :select, collection: { Electrical: 'Electrical', Fire: 'Fire' }
 
   form do |f|
     f.inputs 'Worker Details' do

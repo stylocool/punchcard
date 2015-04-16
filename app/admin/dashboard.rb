@@ -44,6 +44,31 @@ ActiveAdmin.register_page 'Dashboard' do
       end
 
     elsif current_user.role? :Administrator
+
+      # license check
+      if current_user.current_company.license.present?
+        # license expired
+        if current_user.current_company.license.expired_at < Time.now
+          div class: 'blank_slate_container', id: 'dashboard_default_message' do
+            span class: 'blank_slate' do
+              'License expired!'
+            end
+            span class: 'blank_slate' do
+              link_to 'Renew license', new_admin_payment_path
+            end
+          end
+        elsif current_user.current_company.license.expired_at <= (Time.now - 3.days)
+          div class: 'blank_slate_container', id: 'dashboard_default_message' do
+            span class: 'blank_slate' do
+              "Your license is going to expire in #{distance_of_time_in_words_to_now(current_user.current_company.license.expired_at)}"
+            end
+            span class: 'blank_slate' do
+              link_to 'Renew license', new_admin_payment_path
+            end
+          end
+        end
+      end
+
       if current_user.current_company.present?
         if current_user.current_company.company_setting.present?
           payment = Payment.find_by_company_id(current_user.current_company.id)

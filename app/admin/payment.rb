@@ -57,7 +57,16 @@ ActiveAdmin.register Payment do
     column :amount
     column :mode
     column :reference_number
-    column :status
+    column :status do |payment|
+      case payment.status
+        when 'new'
+          status_tag payment.status, :orange
+        when 'paid'
+          status_tag payment.status, :yellow
+        when 'ack'
+          status_tag payment.status, :green
+      end
+    end
     column :created_at
     actions
   end

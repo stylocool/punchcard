@@ -9,9 +9,6 @@
     var markers = [];
 
     function initialize() {
-        var projectLocation = new google.maps.LatLng(<%=@project_lat%>, <%=@project_lng%>);
-        var checkinLocation = new google.maps.LatLng(<%=@checkin_lat%>, <%=@checkin_lng%>);
-        var checkoutLocation = new google.maps.LatLng(<%=@checkout_lat%>, <%=@checkout_lng%>);
 
         var mapOptions = {
             zoom: 17,
@@ -23,10 +20,18 @@
                 mapOptions);
         geocoder = new google.maps.Geocoder();
 
+        var projectLocation = new google.maps.LatLng(<%=@project_lat%>, <%=@project_lng%>);
         addMarker(projectLocation, "<%=@project_title%>");
-        addMarker(checkinLocation, "<%=@checkin_title%>");
-        addMarker(checkoutLocation, "<%=@checkout_title%>");
 
+        <% if @checkin.present? %>
+        var checkinLocation = new google.maps.LatLng(<%=@checkin_lat%>, <%=@checkin_lng%>);
+        addMarker(checkinLocation, "<%=@checkin_title%>");
+        <% end %>
+
+        <% if @checkout.present? %>
+        var checkoutLocation = new google.maps.LatLng(<%=@checkout_lat%>, <%=@checkout_lng%>);
+        addMarker(checkoutLocation, "<%=@checkout_title%>");
+        <% end %>
     }
 
     // Add a marker to the map and push to the array.

@@ -13,90 +13,109 @@ class Ability
       can :manage, User
 
       if user.current_company.present?
-        can [:read, :update, :destroy], Company, :id => user.current_company.id
+        can [:read, :update, :destroy], Company, id: user.current_company.id
 
         if user.current_company.company_setting.present?
-          can [:read, :update, :destroy], CompanySetting, :id => user.current_company.company_setting.id
+          can [:read, :update, :destroy], CompanySetting, id: user.current_company.company_setting.id
         else
           can :manage, CompanySetting
         end
 
-        can :read, License, :company_id => user.current_company.id
+        can :read, License, company_id: user.current_company.id
 
-        payments = Payment.where(:company_id => user.current_company.id);
+        payments = Payment.where(company_id: user.current_company.id);
         if payments.present?
-          can [:read, :destroy], Payment, :company_id => user.current_company.id
+          can [:read, :destroy], Payment, company_id: user.current_company.id
           can :create, Payment
         else
           can [:create, :read, :destroy], Payment
         end
 
-        projects = Project.find_by_company_id(user.current_company.id)
+        projects = Project.where(company_id: user.current_company.id)
         if projects.present?
-          can [:read, :update, :destroy], Project, :company_id => user.current_company.id
-          can :create, Project
+          can [:read, :update, :destroy], Project, company_id: user.current_company.id
+
+          if user.current_company.license.present?
+            can :create, Project
+          end
         else
-          can :manage, Project
+          if user.current_company.license.present?
+            can :manage, Project
+          end
         end
 
-        punchcards = Punchcard.find_by_company_id(user.current_company.id)
+        punchcards = Punchcard.where(company_id: user.current_company.id)
         if punchcards.present?
-          can [:read, :update, :destroy], Punchcard, :company_id => user.current_company.id
-          can :create, Punchcard
+          can [:read, :update, :destroy], Punchcard, company_id: user.current_company.id
+          if user.current_company.license.present?
+            can :create, Punchcard
+          end
         else
           can :manage, Punchcard
         end
 
-        workers = Worker.find_by_company_id(user.current_company.id)
-        if workers.present?
-          can [:read, :update, :destroy], Worker, :company_id => user.current_company.id
-          can :create, Worker
+        workers = Worker.where(company_id: user.current_company.id).count
+        if workers > 0
+          can [:read, :update, :destroy], Worker, company_id: user.current_company.id
+
+          # check if no. of workers exceeded license
+          if user.current_company.license.present?
+            if workers < user.current_company.license.total_workers
+              can :create, Worker
+            end
+          end
         else
-          can :manage, Worker
+          if user.current_company.license.present?
+            can :manage, Worker
+          end
         end
 
-        can :manage, ActiveAdmin::Page, :name => "Payrolls", :namespace_name => "admin"
-        can :manage, ActiveAdmin::Page, :name => "Reports", :namespace_name => "admin"
+        can :manage, ActiveAdmin::Page, name: "Payrolls", namespace_name: "admin"
+        can :manage, ActiveAdmin::Page, name: "Reports", namespace_name: "admin"
 
       else
         can [:manage], Company
       end
 
-      can :read, ActiveAdmin::Page, :name => "Dashboard"
-      can [:read, :destroy], Session
+      can :read, ActiveAdmin::Page, name: "Dashboard"
+      can :read, Session
     else
 
-      can [:read, :update], User, :id => user.id
+      can [:read, :update], User, id: user.id
 
       if user.current_company.present?
-        can [:read], Company, :id => user.current_company.id
+        can :read, Company, id: user.current_company.id
 
         if user.current_company.company_setting.present?
-          can [:read], CompanySetting, :id => user.current_company.company_setting.id
+          can :read, CompanySetting, id: user.current_company.company_setting.id
         end
 
-        projects = Project.find_by_company_id(user.current_company.id)
+        projects = Project.where(company_id: user.current_company.id)
         if projects.present?
-          can [:read], Project, :company_id => user.current_company.id
+          can :read, Project, company_id: user.current_company.id
         end
 
-        punchcards = Punchcard.find_by_company_id(user.current_company.id)
+        punchcards = Punchcard.where(company_id: user.current_company.id)
         if punchcards.present?
-          can [:read], Punchcard, :company_id => user.current_company.id
-          can :create, Punchcard
+          can :read, Punchcard, company_id: user.current_company.id
+          if user.current_company.license.present?
+            can :create, Punchcard
+          end
         else
-          can :manage, Punchcard
+          if user.current_company.license.present?
+            can :manage, Punchcard
+          end
         end
 
-        workers = Worker.find_by_company_id(user.current_company.id)
+        workers = Worker.where(company_id: user.current_company.id)
         if workers.present?
-          can [:read], Worker, :company_id => user.current_company.id
+          can :read, Worker, company_id: user.current_company.id
         end
 
-        can :manage, ActiveAdmin::Page, :name => "Payrolls", :namespace_name => "admin"
+        can :manage, ActiveAdmin::Page, name: "Payrolls", namespace_name: "admin"
 
       end
-      can :read, ActiveAdmin::Page, :name => "Dashboard"
+      can :read, ActiveAdmin::Page, name: "Dashboard"
     end
   end
 end

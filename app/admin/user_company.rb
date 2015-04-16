@@ -10,7 +10,6 @@ ActiveAdmin.register UserCompany do
   end
 
   filter :user_id
-
   filter :company_id
 
   form do |f|
