@@ -21,7 +21,7 @@ class Api::PunchcardsController < ApplicationController
     if @punchcard.checkin.present? && !@punchcard.checkout.present?
       start = @punchcard.checkin.beginning_of_day
       stop = @punchcard.checkin.end_of_day
-      exist = Punchcard.where("company_id = ? and project_id = ? and worker_id = ? and ((checkin is not null and checkin between ? and ?) or (checkout is not null and checkout between ? and ?)", @punchcard.company_id, @punchcard.project_id, @punchcard.worker_id, start, stop, start, stop).order('id desc').first
+      exist = Punchcard.where("company_id = ? and project_id = ? and worker_id = ? and ((checkin is not null and checkin between ? and ?) or (checkout is not null and checkout between ? and ?))", @punchcard.company_id, @punchcard.project_id, @punchcard.worker_id, start, stop, start, stop).order('id desc').first
       if exist.present?
         exist.checkin = @punchcard.checkin
         exist.checkin_location = @punchcard.checkin_location
@@ -34,7 +34,7 @@ class Api::PunchcardsController < ApplicationController
     elsif !@punchcard.checkin.present? && @punchcard.checkout.present?
       start = @punchcard.checkout.beginning_of_day
       stop = @punchcard.checkout.end_of_day
-      exist = Punchcard.where("company_id = ? and project_id = ? and worker_id = ? and ((checkin is not null and checkin between ? and ?) or (checkout is not null and checkout between ? and ?)", @punchcard.company_id, @punchcard.project_id, @punchcard.worker_id, start, stop, start, stop).order('id desc').first
+      exist = Punchcard.where("company_id = ? and project_id = ? and worker_id = ? and ((checkin is not null and checkin between ? and ?) or (checkout is not null and checkout between ? and ?))", @punchcard.company_id, @punchcard.project_id, @punchcard.worker_id, start, stop, start, stop).order('id desc').first
       if exist.present?
         exist.checkout = @punchcard.checkout
         exist.checkout_location = @punchcard.checkout_location
@@ -47,7 +47,7 @@ class Api::PunchcardsController < ApplicationController
     elsif @punchcard.checkin.present? && @punchcard.checkout.present?
       start = @punchcard.checkin.beginning_of_day
       stop = @punchcard.checkin.end_of_day
-      exist = Punchcard.where("company_id = ? and project_id = ? and worker_id = ? and ((checkin is not null and checkin between ? and ?) or (checkout is not null and checkout between ? and ?)", @punchcard.company_id, @punchcard.project_id, @punchcard.worker_id, start, stop, start, stop).order('id desc').first
+      exist = Punchcard.where("company_id = ? and project_id = ? and worker_id = ? and ((checkin is not null and checkin between ? and ?) or (checkout is not null and checkout between ? and ?))", @punchcard.company_id, @punchcard.project_id, @punchcard.worker_id, start, stop, start, stop).order('id desc').first
       if exist.present?
         exist.checkin = @punchcard.checkin
         exist.checkin_location = @punchcard.checkin_location
