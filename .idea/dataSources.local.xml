@@ -7,5 +7,8 @@
     <data-source name="Rails activeadmin: test" uuid="ce88f4e8-416d-4800-975e-affdceac066c">
       <first-sync>true</first-sync>
     </data-source>
+    <data-source name="Rails activeadmin: production" uuid="bc62e814-ef38-406e-a21b-18fce4c10468">
+      <first-sync>true</first-sync>
+    </data-source>
   </component>
 </project>

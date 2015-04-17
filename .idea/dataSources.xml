@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="DataSourceManagerImpl" format="xml" hash="3356750444">
+  <component name="DataSourceManagerImpl" format="xml" hash="2835157989">
     <data-source source="LOCAL" name="Rails activeadmin: development" uuid="f661a82f-1ce1-439f-8d8c-31c3cbed2694">
       <driver-ref>sqlite.xerial</driver-ref>
       <synchronize>true</synchronize>
@@ -13,6 +13,13 @@
       <synchronize>true</synchronize>
       <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
       <jdbc-url>jdbc:postgresql:punchcard_test</jdbc-url>
+      <libraries />
+    </data-source>
+    <data-source source="LOCAL" name="Rails activeadmin: production" uuid="bc62e814-ef38-406e-a21b-18fce4c10468">
+      <driver-ref>postgresql</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
+      <jdbc-url>jdbc:postgresql:punchcard_production</jdbc-url>
       <libraries />
     </data-source>
   </component>
