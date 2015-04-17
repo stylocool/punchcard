@@ -22,12 +22,12 @@
 
         addMarker(projectLocation, "<%=@project_title%>");
 
-        <% if @checkin.present? %>
+        <% if @checkin_lat.present? %>
         var checkinLocation = new google.maps.LatLng(<%=@checkin_lat%>, <%=@checkin_lng%>);
         addMarker(checkinLocation, "<%=@checkin_title%>");
         <% end %>
 
-        <% if @checkout.present? %>
+        <% if @checkout_lat.present? %>
         var checkoutLocation = new google.maps.LatLng(<%=@checkout_lat%>, <%=@checkout_lng%>);
         addMarker(checkoutLocation, "<%=@checkout_title%>");
         <% end %>
