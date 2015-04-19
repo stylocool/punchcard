@@ -111,11 +111,18 @@ ActiveAdmin.register Punchcard do
       "#{number_to_currency(punchcard.fine)}"
     end
     column :cancel_pay
-    column 'Total/Normal/Overtime Hours', :total_hours do |punchcard|
-      "#{punchcard.total_hours} / #{punchcard.normal_work_hours} / #{punchcard.overtime_work_hours}"
+    column 'Total/Normal/Overtime Minutes', :total_hours do |punchcard|
+      # hourly
+      #"#{punchcard.total_hours} / #{punchcard.normal_work_hours} / #{punchcard.overtime_work_hours}"
+
+      # minutely
+      "#{punchcard.total_work_minutes} / #{punchcard.normal_work_minutes} / #{punchcard.overtime_work_minutes}"
     end
     column :amount do |punchcard|
-      punchcard.amount < 0 ? content_tag(:div, "#{number_to_currency(punchcard.amount)}", style: 'color:red') : content_tag(:div, "#{number_to_currency(punchcard.amount)}")
+      # hourly
+      #punchcard.amount < 0 ? content_tag(:div, "#{number_to_currency(punchcard.amount)}", style: 'color:red') : content_tag(:div, "#{number_to_currency(punchcard.amount)}")
+      # minutely
+      punchcard.amount_minutes < 0 ? content_tag(:div, "#{number_to_currency(punchcard.amount_minutes)}", style: 'color:red') : content_tag(:div, "#{number_to_currency(punchcard.amount_minutes)}")
     end
     column :map do |punchcard|
       link_to 'View', "punchcards/map/#{punchcard.id}"
@@ -127,18 +134,20 @@ ActiveAdmin.register Punchcard do
   end
 
   sidebar :history, only: :show do
-    if current_user.role? :Root || :Administrator
-      render 'layouts/version'
-    end
-  end
-
-  member_action :history do
-    if current_user.role? :Root || :Administrator
+    #if current_user.role? :Root || :Administrator
       @punchcard = Punchcard.find(params[:id])
       @versions = @punchcard.versions
-      render 'layouts/history'
-    end
+      render 'layouts/version'
+    #end
   end
+
+  #member_action :history, only: :show do
+  #  if current_user.role? :Root || :Administrator
+  #    @punchcard = Punchcard.find(params[:id])
+  #    @versions = @punchcard.versions
+  #    render 'layouts/history'
+  #  end
+  #end
 
   filter :company, as: :select, collection: proc {
                     if current_user.role? :Root
@@ -165,6 +174,9 @@ ActiveAdmin.register Punchcard do
 
   filter :checkin
   filter :checkout
+  filter :leave, as: :select, collection: { AmLeave: 'Leave (AM)', PmLeave: 'Leave (PM)', Leave: 'Leave', MC: 'MC' }
+  filter :cancel_pay
+  filter :fine
 
   form do |f|
     f.inputs 'Punchcard Details' do

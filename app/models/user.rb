@@ -1,6 +1,6 @@
 class User < ActiveRecord::Base
   has_paper_trail :on => [:create, :update, :destroy]
-  #before_create :set_default_role
+  before_create :set_default_role
 
   # Include default users modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable
@@ -64,12 +64,11 @@ class User < ActiveRecord::Base
     self.authentication_token = Token.generate_authentication_token
   end
 
-  #private
-  #def set_default_role
-  #  unless self.role.present?
-  #    self.role = 'Administrator'
-  #  end
-  #end
-
+  private
+  def set_default_role
+    unless self.role.present?
+      self.role = 'Administrator'
+    end
+  end
 
 end

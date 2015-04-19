@@ -25,10 +25,10 @@ class Ability
 
         payments = Payment.where(company_id: user.current_company.id);
         if payments.present?
-          can [:read, :destroy], Payment, company_id: user.current_company.id
+          can [:read, :update, :destroy], Payment, company_id: user.current_company.id
           can :create, Payment
         else
-          can [:create, :read, :destroy], Payment
+          can :manage, Payment
         end
 
         projects = Project.where(company_id: user.current_company.id)
@@ -67,6 +67,8 @@ class Ability
         else
           if user.current_company.license.present?
             can :manage, Worker
+          else
+            flash.now[alert: 'License not found!']
           end
         end
 
@@ -79,7 +81,8 @@ class Ability
 
       can :read, ActiveAdmin::Page, name: "Dashboard"
       can :read, Session
-    else
+
+    elsif user.role? :User
 
       can [:read, :update], User, id: user.id
 
@@ -98,13 +101,13 @@ class Ability
         punchcards = Punchcard.where(company_id: user.current_company.id)
         if punchcards.present?
           can :read, Punchcard, company_id: user.current_company.id
-          if user.current_company.license.present?
-            can :create, Punchcard
-          end
-        else
-          if user.current_company.license.present?
-            can :manage, Punchcard
-          end
+          #if user.current_company.license.present?
+          #  can :create, Punchcard
+          #end
+        #else
+          #if user.current_company.license.present?
+          #  can :manage, Punchcard
+          #end
         end
 
         workers = Worker.where(company_id: user.current_company.id)
@@ -116,6 +119,10 @@ class Ability
 
       end
       can :read, ActiveAdmin::Page, name: "Dashboard"
+
+    elsif user.role? :Scanner
+      can :read, ActiveAdmin::Page, name: "Dashboard"
+      can [:read, :update], User, id: user.id
     end
   end
 end

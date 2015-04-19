@@ -1,10 +1,8 @@
-<% if !@versions.empty? %>
-    <h3>Current Version: <%= @versions.length %></h3>
-
-    <b>Created At:</b>
+<% if @versions.present? %>
+    <b>Last Modified At:</b>
     <%= @versions.last.created_at%>
     <br>
-    <b>Modified By:</b> <%= User.find(@versions.last.whodunnit).email %>
+    <b>Last Modified By:</b> <%= User.find(@versions.last.whodunnit).email %>
     <br>
     <% if @versions.length.to_i > 1 %>
         <% if params[:version].to_i > 1 || !params[:version] %>

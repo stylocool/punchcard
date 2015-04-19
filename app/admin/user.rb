@@ -13,7 +13,9 @@ ActiveAdmin.register User do
         if current_user.role? :Root
           @users = User.all.page(params[:page])
         elsif current_user.role? :Administrator
-          current_user.current_company.present? ? @users = User.where('id in (select user_id from user_companies where company_id = ?)', current_user.current_company.id).page(params[:page]) : @users = User.where(id: current_user.id).page(params[:page])
+          current_user.current_company.present? ?
+              @users = User.where('id in (select user_id from user_companies where company_id = ?)', current_user.current_company.id).page(params[:page]) :
+              @users = User.where(id: current_user.id).page(params[:page])
         end
         format.html
       end
@@ -21,24 +23,30 @@ ActiveAdmin.register User do
 
     def find_resource
       @user = User.find(params[:id])
-      return @user if current_user.role? :Root
-      return @user if current_user.id == @user.id
-      if @user.role? :User
-        if current_user.current_company.present?
-          user_companies = UserCompany.where(company_id: current_user.current_company.id)
-          found = false
-          user_companies.each do |uc|
-            if uc.user_id == @user.id
-              found = true
-              break
-            end
-          end
-          found ? @user : :access_denied
-        else
-          :access_denied
-        end
+      if current_user.role? :Root
+        @user
       else
-        :access_denied
+        if current_user.id == @user.id
+          @user
+        else
+          if @user.role? :User
+            if current_user.current_company.present?
+              user_companies = UserCompany.where(company_id: current_user.current_company.id)
+              found = false
+              user_companies.each do |uc|
+                if uc.user_id == @user.id
+                  found = true
+                  break
+                end
+              end
+              found ? @user : :access_denied
+            else
+              :access_denied
+            end
+          else
+            :access_denied
+          end
+        end
       end
     end
 
@@ -49,9 +57,11 @@ ActiveAdmin.register User do
     end
 
     def add_user_company(user)
-      return if current_user.role != :Administrator
-      user_company = UserCompany.new(company_id: current_user.current_company.id, user_id: user.id)
-      user_company.save
+      # only allow administrator to add additional users
+      if current_user.role? :Administrator
+        user_company = UserCompany.new(company_id: current_user.current_company.id, user_id: user.id)
+        user_company.save
+      end
     end
 
     def remove_user_company(user)
@@ -98,7 +108,7 @@ ActiveAdmin.register User do
       if current_user.role? :Root
         f.input :role, as: :radio, collection: { Root: 'Root', Administrator: 'Administrator' }
       elsif current_user.role? :Administrator
-        f.input :role, as: :radio, collection: { Administrator: 'Administrator', User: 'User' }
+        f.input :role, as: :radio, collection: { Administrator: 'Administrator', User: 'User', Scanner: 'Scanner' }
       end
     end
     f.actions

@@ -46,7 +46,7 @@ ActiveAdmin.register_page 'Dashboard' do
     elsif current_user.role? :Administrator
 
       # license check
-      if current_user.current_company.license.present?
+      if current_user.current_company.present? && current_user.current_company.license.present?
         # license expired
         if current_user.current_company.license.expired_at < Time.now
           div class: 'blank_slate_container', id: 'dashboard_default_message' do
@@ -134,7 +134,8 @@ ActiveAdmin.register_page 'Dashboard' do
           end
         end
       end
-    else
+
+    elsif current_user.role? :User
       # show audit trail
       columns do
         column do

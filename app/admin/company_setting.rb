@@ -1,5 +1,5 @@
 ActiveAdmin.register CompanySetting do
-  permit_params :name, :rate, :overtime_rate, :working_hours, :lunch_hour, :dinner_hour, :distance_check, :company_id
+  permit_params :name, :overtime_rate, :working_hours, :lunch_hour, :dinner_hour, :distance_check, :company_id
 
   controller do
     def find_resource
