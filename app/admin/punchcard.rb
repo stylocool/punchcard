@@ -127,27 +127,30 @@ ActiveAdmin.register Punchcard do
     column :map do |punchcard|
       link_to 'View', "punchcards/map/#{punchcard.id}"
     end
+    column :trail do |punchcard|
+      link_to "#{punchcard.versions.length.to_i}", "punchcards/#{punchcard.id}/history"
+    end
     column :remarks do |punchcard|
       content_tag(:div, "#{punchcard.remarks}", style: 'color:red')
     end
     actions
   end
 
-  sidebar :history, only: :show do
+  sidebar :version, only: :show do
     #if current_user.role? :Root || :Administrator
       @punchcard = Punchcard.find(params[:id])
-      @versions = @punchcard.versions
+      #@versions = @punchcard.versions
       render 'layouts/version'
     #end
   end
 
-  #member_action :history, only: :show do
-  #  if current_user.role? :Root || :Administrator
-  #    @punchcard = Punchcard.find(params[:id])
-  #    @versions = @punchcard.versions
-  #    render 'layouts/history'
-  #  end
-  #end
+  member_action :history do
+    #if current_user.role? :Root || :Administrator
+      @punchcard = Punchcard.find(params[:id])
+      @versions = @punchcard.versions
+      render 'layouts/history'
+    #end
+  end
 
   filter :company, as: :select, collection: proc {
                     if current_user.role? :Root

@@ -68,10 +68,10 @@ ActiveAdmin.register_page 'Payrolls' do
             work = @items[punchcard.checkin.day - 1]
             work.punchcard = punchcard
 
-            @amount += punchcard.amount
-            @amount_deduction += punchcard.amount_deduction
-            @amount_normal += punchcard.amount_normal
-            @amount_overtime += punchcard.amount_overtime
+            @amount += punchcard.amount_minutes
+            @amount_deduction += punchcard.amount_deduction_minutes
+            @amount_normal += punchcard.amount_normal_minutes
+            @amount_overtime += punchcard.amount_overtime_minutes
           end
         end
 
@@ -114,10 +114,10 @@ ActiveAdmin.register_page 'Payrolls' do
           work = @items[punchcard.checkin.day - 1]
           work.punchcard = punchcard
 
-          @amount += punchcard.amount
-          @amount_deduction += punchcard.amount_deduction
-          @amount_normal += punchcard.amount_normal
-          @amount_overtime += punchcard.amount_overtime
+          @amount += punchcard.amount_minutes
+          @amount_deduction += punchcard.amount_deduction_minutes
+          @amount_normal += punchcard.amount_normal_minutes
+          @amount_overtime += punchcard.amount_overtime_minutes
         end
       end
 

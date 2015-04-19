@@ -41,12 +41,12 @@
               <td class="col col-project" style="text-align: center"><%=item.punchcard.project.name%></td>
               <td class="col col-checkin" style="text-align: center"><%=item.punchcard.checkin.strftime("%Y-%m-%d %H:%M:%S")%></td>
               <td class="col col-checkout" style="text-align: center"><%=item.punchcard.checkout.strftime("%Y-%m-%d %H:%M:%S")%></td>
-              <td class="col col-hours" style="text-align: center"><%=item.punchcard.total_hours%></td>
-              <td class="col col-normal-hours" style="text-align: center"><%=item.punchcard.normal_work_hours%></td>
-              <td class="col col-overtime-hours" style="text-align: center"><%=item.punchcard.overtime_work_hours%></td>
+              <td class="col col-hours" style="text-align: center"><%=item.punchcard.total_work_minutes/60%></td>
+              <td class="col col-normal-hours" style="text-align: center"><%=item.punchcard.normal_work_minutes/60%></td>
+              <td class="col col-overtime-hours" style="text-align: center"><%=item.punchcard.overtime_work_minutes/60%></td>
               <td class="col col-fine" style="text-align: center"><%=number_to_currency(item.punchcard.fine)%></td>
               <td class="col col-cancel-pay" style="text-align: center"><%=number_to_currency(item.punchcard.cancel_pay)%></td>
-              <td class="col col-amount" style="text-align: center"><%=number_to_currency(item.punchcard.amount)%></td>
+              <td class="col col-amount" style="text-align: center"><%=number_to_currency(item.punchcard.amount_minutes)%></td>
               <% else %>
               <td class="col col-date" style="text-align: center"><%=item.date%></td>
               <td class="col col-empty" colspan="10" style="text-align:center">N.A.</td>

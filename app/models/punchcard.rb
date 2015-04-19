@@ -78,8 +78,15 @@ class Punchcard < ActiveRecord::Base
         minutes -= 60
       end
 
-      lunch_hour = cal_checkin.hour < 11 # lunch hour is deducted if checkin is before 11am
-      dinner_hour = cal_checkin.hour < 22 && cal_checkout.hour >= 22 # dinner hour is deducted if checkout is after or equals to 10pm
+      if cal_checkin.day == cal_checkout.day && cal_checkin.month == cal_checkout.month
+        lunch_hour = cal_checkin.hour < 11 # lunch hour is deducted if checkin is before 11am
+        dinner_hour = cal_checkin.hour < 22 && cal_checkout.hour >= 22 # dinner hour is deducted if checkout is after or equals to 10pm
+      elsif cal_checkin.day != cal_checkout.day && cal_checkin.month == cal_checkout.month
+        if cal_checkout > cal_checkin
+          lunch_hour = cal_checkin.hour < 11 # lunch hour is deducted if checkin is before 11am
+          dinner_hour = cal_checkin.hour < 22 || cal_checkout.hour >= 22 # dinner hour is deducted if checkout is after or equals to 10pm
+        end
+      end
 
       #hours += minutes/60
       total_minutes = hours * 60 + minutes
