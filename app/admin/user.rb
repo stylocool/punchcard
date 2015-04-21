@@ -25,27 +25,22 @@ ActiveAdmin.register User do
       @user = User.find(params[:id])
       if current_user.role? :Root
         @user
-      else
-        if current_user.id == @user.id
-          @user
-        else
-          if @user.role? :User
-            if current_user.current_company.present?
-              user_companies = UserCompany.where(company_id: current_user.current_company.id)
-              found = false
-              user_companies.each do |uc|
-                if uc.user_id == @user.id
-                  found = true
-                  break
-                end
-              end
-              found ? @user : :access_denied
-            else
-              :access_denied
-            end
+      elsif current_user.role? :Administrator
+        if current_user.current_company.present?
+          user_company = UserCompany.where(company_id: current_user.current_company.id, user_id: @user.id)
+          if user_company.present?
+            @user
           else
             :access_denied
           end
+        else
+          :access_denied
+        end
+      elsif @current_user.role? :User || :Scanner
+        if current_user.id == @user.id
+          @user
+        else
+          :access_denied
         end
       end
     end
