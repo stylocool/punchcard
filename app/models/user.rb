@@ -1,5 +1,5 @@
 class User < ActiveRecord::Base
-  has_paper_trail :on => [:create, :update, :destroy]
+  has_paper_trail :on => [:create, :destroy]
 
   before_create :set_default_role
 

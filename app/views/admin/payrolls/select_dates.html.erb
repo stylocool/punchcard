@@ -5,12 +5,13 @@
           <fieldset class="inputs"><legend><span>Select Payroll Dates</span></legend>
             <ol>
               <li class="string input optional stringish" id="payroll_object_id_input">
-                <% if @payroll.type == 'Company' %>
-                    <%= f.label :object_id, 'Company' %>
-                <% else %>
-                    <%= f.label :object_id, 'Worker' %>
-                <% end %>
-                <%= f.select :object_id, @objects.map{ |c| [c.name, c.id] } %>
+                <%= f.label :object_id, 'Worker' %>
+                <select name="payroll[object_id]" id="payroll[object_id]" onchange="change_object()">
+                  <option value="0">All Workers</option>
+                  <% @objects.each do |o| %>
+                  <option value="<%= o.id %>"><%= o.name %></option>
+                  <% end %>
+                </select>
               </li>
               <li class="string input optional stringish" id="payroll_start_input">
                 <%= f.label :period, 'Period' %>
@@ -18,18 +19,43 @@
               </li>
               <li class="string input optional stringish" id="payroll_format_input">
                 <%= f.label :mode, 'Mode' %>
-                <select name="payroll[mode]" id="[payroll_mode]" onchange="change_mode()">
+                <select name="payroll[mode]" id="payroll[mode]" onchange="change_mode()">
                   <option value="Details">Details</option>
                   <option selected="selected" value="Summary">Summary</option>
                 </select>
                 (Details is only available in HTML format)
                 <script>
                   function change_mode() {
-                      var modeSelect = document.getElementById('[payroll_mode]');
-                      var formatSelect = document.getElementById('[payroll_format]');
-                      if (modeSelect.value == 'Details') {
+                      var objectSelect = document.getElementById('payroll[object_id]')
+                      var modeSelect = document.getElementById('payroll[mode]');
+                      var formatSelect = document.getElementById('payroll[format]');
+
+                      if (objectSelect.value == '0') {
+                          if (modeSelect.value == 'Details') {
+                              formatSelect.options.length = 0;
+                          } else {
+                              formatSelect.options.length = 0;
+                              formatSelect.options.add(new Option('PDF', 'PDF'));
+                          }
+                      }
+                      else {
+                          if (modeSelect.value == 'Details') {
+                              formatSelect.options.length = 0;
+                              formatSelect.options.add(new Option('HTML', 'HTML'))
+                          } else {
+                              formatSelect.options.length = 0;
+                              formatSelect.options.add(new Option('PDF', 'PDF'));
+                              formatSelect.options.add(new Option('HTML', 'HTML'));
+                          }
+                      }
+                  }
+
+                  function change_object() {
+                      var objectSelect = document.getElementById('payroll[object_id]')
+                      var formatSelect = document.getElementById('payroll[format]');
+                      if (objectSelect.value == '0') {
                           formatSelect.options.length = 0;
-                          formatSelect.options.add(new Option('HTML', 'HTML'))
+                          formatSelect.options.add(new Option('PDF', 'PDF'));
                       } else {
                           formatSelect.options.length = 0;
                           formatSelect.options.add(new Option('PDF', 'PDF'));
@@ -40,9 +66,8 @@
               </li>
               <li class="string input optional stringish" id="payroll_format_input">
                 <%= f.label :format, 'Format' %>
-                <select name="payroll[format]" id="[payroll_format]">
+                <select name="payroll[format]" id="payroll[format]">
                   <option selected="selected" value="PDF">PDF</option>
-                  <option value="HTML">HTML</option>
                 </select>
               </li>
             </ol>

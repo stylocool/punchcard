@@ -15,6 +15,7 @@ gem 'best_in_place', github: 'bernat/best_in_place'
 gem 'chartkick'
 gem 'groupdate'
 gem 'activerecord-session_store'
+gem 'rubyzip'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '4.2.0'

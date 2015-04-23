@@ -17,5 +17,5 @@
 /tmp
 
 #
-/public/system/*
+/public/system/**
 run_production.sh

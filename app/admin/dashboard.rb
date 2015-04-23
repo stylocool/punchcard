@@ -27,7 +27,7 @@ ActiveAdmin.register_page 'Dashboard' do
         column do
           panel 'Recent Changes' do
             table_for PaperTrail::Version.order('id desc').limit(10) do
-              column('Id') { |v| v.item_id }
+              column('Id') { |v| v.id }
               column('Type') { |v| v.item_type.underscore.humanize }
               column('Event') { |v| v.event }
               column('Object/Changes') do |v|
@@ -90,7 +90,7 @@ ActiveAdmin.register_page 'Dashboard' do
                       table_for PaperTrail::Version
                         .where('whodunnit in (select user_id::text from user_companies where company_id = ' + current_user.current_company.id.to_s + ')')
                         .order('id desc').limit(10) do
-                        column('Id') { |v| v.item_id }
+                        column('Id') { |v| v.id }
                         column('Type') { |v| v.item_type.underscore.humanize }
                         column('Event') { |v| v.event }
                         column('Object/Changes') do |v|
@@ -157,7 +157,7 @@ ActiveAdmin.register_page 'Dashboard' do
         column do
           panel 'Recent Changes' do
             table_for PaperTrail::Version.where(whodunnit: current_user.id).order('id desc').limit(10) do
-              column('Id') { |v| v.item_id }
+              column('Id') { |v| v.id }
               column('Item Type') { |v| v.item_type.underscore.humanize }
               column('Event') { |v| v.event }
               column('Object/Changes') do |v|

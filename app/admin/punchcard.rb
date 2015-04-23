@@ -2,6 +2,15 @@ ActiveAdmin.register Punchcard do
   permit_params :company_id, :project_id, :worker_id, :checkin_location, :checkin, :checkout_location, :checkout, :fine, :cancel_pay, :leave
 
   controller do
+
+    #def scoped_collection
+    #  if current_user.role? :Root
+    #    Punchcard.all.page(params[:page]).per(20)
+    #  else
+    #    Punchcard.where('company_id = ?', current_user.current_company.id).page(params[:page]).per(20)
+    #  end
+    #end
+
     def find_resource
       @punchcard = Punchcard.where(id: params[:id]).first
 

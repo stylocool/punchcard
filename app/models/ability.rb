@@ -7,7 +7,7 @@ class Ability
     user ||= User.new # guest user (not logged in)
     if user.role? :Root
       can :manage, :all
-      can :read, PaperTrail::Version
+      can :manage, PaperTrail::Version
 
     elsif user.role? :Administrator
 
@@ -40,8 +40,6 @@ class Ability
 
           if user.current_company.license.present?
             can :create, Project
-          else
-            redirect_to admin_dashboard_path, notice: 'You do not have a valid license'
           end
         else
           if user.current_company.license.present?

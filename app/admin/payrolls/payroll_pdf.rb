@@ -21,7 +21,7 @@ class PayrollPdf < Prawn::Document
     text @worker.company.name, size: 24, style: :bold, align: :center
     text @worker.company.address, size: 12, align: :center
 
-    logopath =  '#{Rails.root}/public' + @worker.company.logo.url(:original)
+    logopath =  "#{Rails.root}/public" + @worker.company.logo.url(:original)
     # remove ?
     image logopath.partition('?')[0], width: 100, height: 100, at: [570, 570]
   end

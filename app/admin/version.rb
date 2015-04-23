@@ -79,7 +79,7 @@ ActiveAdmin.register PaperTrail::Version, as: "Audit Trail" do
         user.email if user.present?
       end
     end
-    actions defaults: true do |v|
+    actions defaults: false do |v|
       link_to 'Rollback', "audit_trails/#{v.id}/rollback"
     end
   end
