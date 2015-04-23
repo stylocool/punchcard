@@ -30,5 +30,8 @@ Rails.application.routes.draw do
     put 'reports' => 'reports#select_report'
     post 'reports' => 'reports#view_report'
 
+    # versions
+    get 'audit_trails/:id/rollback' => 'audit_trails#rollback'
+    get 'audit_trails/item_type/:item_type/item_id/:item_id(.:format)' => 'audit_trails#find_by_item_type_and_item_id'
   end
 end

@@ -1,6 +1,7 @@
 class CompanySetting < ActiveRecord::Base
   has_paper_trail :on => [:create, :update, :destroy]
-	belongs_to :company
+
+  belongs_to :company
 
   # validations
   validates :name, :distance_check, :overtime_rate, :company_id, presence: true

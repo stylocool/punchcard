@@ -24,7 +24,7 @@ class Api::WorkersController < ApplicationController
     if @worker.present?
 
     else
-      usercompany = UserCompany.where(:user_id => current_user.id).first
+      usercompany = UserCompany.where(user_id: current_user.id).first
       company = Company.find(usercompany.company_id)
 
       # create new worker if work permit not found
@@ -35,8 +35,9 @@ class Api::WorkersController < ApplicationController
       @worker.nationality = ""
       @worker.contact = "UNKNOWN"
       @worker.work_permit = params[:id]
-      @worker.worker_type = "worker"
+      @worker.worker_type = "Worker"
       @worker.company_id = company.id
+      @worker.basic_pay = 20
       @worker.save
     end
   end

@@ -5,8 +5,8 @@ class Punchcard < ActiveRecord::Base
   belongs_to :project
   belongs_to :company
 
-  attr_accessor :calculated, :total_hours, :normal_work_hours, :overtime_work_hours, :amount, :amount_normal, :amount_overtime, :amount_deduction, :remarks,
-                :total_work_minutes, :normal_work_minutes, :overtime_work_minutes, :amount_minutes, :amount_normal_minutes, :amount_overtime_minutes, :amount_deduction_minutes
+  #attr_accessor :calculated, :total_hours, :normal_work_hours, :overtime_work_hours, :amount, :amount_normal, :amount_overtime, :amount_deduction, :remarks,
+  attr_accessor :calculated, :total_work_minutes, :normal_work_minutes, :overtime_work_minutes, :amount_minutes, :amount_normal_minutes, :amount_overtime_minutes, :amount_deduction_minutes, :remarks
 
   @calculated = 0
 

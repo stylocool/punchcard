@@ -7,6 +7,7 @@ class Ability
     user ||= User.new # guest user (not logged in)
     if user.role? :Root
       can :manage, :all
+      can :read, PaperTrail::Version
 
     elsif user.role? :Administrator
 
@@ -18,7 +19,7 @@ class Ability
         if user.current_company.company_setting.present?
           can [:read, :update, :destroy], CompanySetting, id: user.current_company.company_setting.id
         else
-          can :manage, CompanySetting
+          can :create, CompanySetting
         end
 
         can :read, License, company_id: user.current_company.id
@@ -28,19 +29,23 @@ class Ability
           can [:read, :update, :destroy], Payment, company_id: user.current_company.id
           can :create, Payment
         else
-          can :manage, Payment
+          can :create, Payment
         end
 
         projects = Project.where(company_id: user.current_company.id)
         if projects.present?
           can [:read, :update, :destroy], Project, company_id: user.current_company.id
 
+          can :manage, ActiveAdmin::Page, name: "Reports", namespace_name: "admin"
+
           if user.current_company.license.present?
             can :create, Project
+          else
+            redirect_to admin_dashboard_path, notice: 'You do not have a valid license'
           end
         else
           if user.current_company.license.present?
-            can :manage, Project
+            can :create, Project
           end
         end
 
@@ -51,12 +56,14 @@ class Ability
             can :create, Punchcard
           end
         else
-          can :manage, Punchcard
+          can :create, Punchcard
         end
 
         workers = Worker.where(company_id: user.current_company.id).count
         if workers > 0
           can [:read, :update, :destroy], Worker, company_id: user.current_company.id
+
+          can :manage, ActiveAdmin::Page, name: "Payrolls", namespace_name: "admin"
 
           # check if no. of workers exceeded license
           if user.current_company.license.present?
@@ -66,21 +73,17 @@ class Ability
           end
         else
           if user.current_company.license.present?
-            can :manage, Worker
-          else
-            flash.now[alert: 'License not found!']
+            can :create, Worker
           end
         end
 
-        can :manage, ActiveAdmin::Page, name: "Payrolls", namespace_name: "admin"
-        can :manage, ActiveAdmin::Page, name: "Reports", namespace_name: "admin"
+        can :manage, PaperTrail::Version
 
       else
-        can [:manage], Company
+        can [:create], Company
       end
 
       can :read, ActiveAdmin::Page, name: "Dashboard"
-      can :read, Session
 
     elsif user.role? :User
 

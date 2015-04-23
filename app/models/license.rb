@@ -1,5 +1,6 @@
 class License < ActiveRecord::Base
   has_paper_trail :on => [:create, :update, :destroy]
+
   belongs_to :company
 
   # validations

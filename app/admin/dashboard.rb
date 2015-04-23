@@ -7,7 +7,7 @@ ActiveAdmin.register_page 'Dashboard' do
       columns do
         column do
           panel 'Pending Payment' do
-            table_for Payment.where("status != 'ack'").limit(20) do
+            table_for Payment.where("status != 'ack'").order('id desc').limit(10) do
               column('Company') { |p| p.company.name }
               column('Total_Workers') { |p| p.total_workers }
               column('Rate/Mth') { |p| number_to_currency(p.rate_per_month) }
@@ -26,12 +26,18 @@ ActiveAdmin.register_page 'Dashboard' do
       columns do
         column do
           panel 'Recent Changes' do
-            table_for PaperTrail::Version.order('created_at DESC').limit(20) do
-              column('Item') { |v| v.item }
+            table_for PaperTrail::Version.order('id desc').limit(10) do
+              column('Id') { |v| v.item_id }
               column('Type') { |v| v.item_type.underscore.humanize }
               column('Event') { |v| v.event }
-              column('Changes') { |v| v.changeset }
-              column('Modified At') { |v| v.created_at }
+              column('Object/Changes') do |v|
+                if v.event == 'destroy'
+                  v.object
+                else
+                  v.changeset
+                end
+              end
+              column('Modified At') { |v| v.created_at.strftime('%Y-%m-%d %H:%M:%S') }
               column('Modified By') do |v|
                 if v.whodunnit.present?
                   user = User.find(v.whodunnit)
@@ -83,12 +89,18 @@ ActiveAdmin.register_page 'Dashboard' do
                     panel 'Recent Changes' do
                       table_for PaperTrail::Version
                         .where('whodunnit in (select user_id::text from user_companies where company_id = ' + current_user.current_company.id.to_s + ')')
-                        .order('created_at DESC').limit(20) do
-                        column('Item') { |v| v.item }
+                        .order('id desc').limit(10) do
+                        column('Id') { |v| v.item_id }
                         column('Type') { |v| v.item_type.underscore.humanize }
                         column('Event') { |v| v.event }
-                        column('Changes') { |v| v.changeset }
-                        column('Modified At') { |v| v.created_at }
+                        column('Object/Changes') do |v|
+                          if v.event == 'destroy'
+                            v.object
+                          else
+                            v.changeset
+                          end
+                        end
+                        column('Modified At') { |v| v.created_at.strftime('%Y-%m-%d %H:%M:%S') }
                         column('Modified By') do |v|
                           if v.whodunnit.present?
                             user = User.find(v.whodunnit)
@@ -109,7 +121,11 @@ ActiveAdmin.register_page 'Dashboard' do
             else
               div class: 'blank_slate_container', id: 'dashboard_default_message' do
                 span class: 'blank_slate' do
-                  link_to 'Create project', new_admin_project_path
+                  if current_user.current_company.license.present?
+                    link_to 'Create project', new_admin_project_path
+                  else
+                    "Your license is still pending approval. Please ensure you've made the necessary payment and updated the payment reference number in the Payment you've submiited."
+                  end
                 end
               end
             end
@@ -140,12 +156,18 @@ ActiveAdmin.register_page 'Dashboard' do
       columns do
         column do
           panel 'Recent Changes' do
-            table_for PaperTrail::Version.where(whodunnit: current_user.id).order('created_at DESC').limit(20) do
-              column('Item') { |v| v.item }
-              column('Type') { |v| v.item_type.underscore.humanize }
+            table_for PaperTrail::Version.where(whodunnit: current_user.id).order('id desc').limit(10) do
+              column('Id') { |v| v.item_id }
+              column('Item Type') { |v| v.item_type.underscore.humanize }
               column('Event') { |v| v.event }
-              column('Changes') { |v| v.changeset }
-              column('Modified At') { |v| v.created_at }
+              column('Object/Changes') do |v|
+                if v.event == 'destroy'
+                  v.object
+                else
+                  v.changeset
+                end
+              end
+              column('Modified At') { |v| v.created_at.strftime('%Y-%m-%d %H:%M:%S') }
               column('Modified By') do |v|
                 if v.whodunnit.present?
                   user = User.find(v.whodunnit)

@@ -1,10 +1,21 @@
 panel "History" do
   table_for assigns[:versions] do
     column :id
-    column 'Modify At', :created_at
-    column 'Modify By', :whodunnit do |version|
-      (User.find(version.whodunnit)).email
+    column :item_type
+    column :event
+    column 'Object/Changes', :object do |v|
+      if v.event == 'destroy'
+        v.object
+      else
+        v.changeset
+      end
     end
-    column 'Change', :changeset
+    column 'Modify At', :created_at do |v|
+       v.created_at.strftime('%Y-%m-%d %H:%M:%S')
+    end
+    column 'Modify By', :whodunnit do |v|
+      user = (User.find(v.whodunnit))
+      user.email if user.present?
+    end
   end
 end

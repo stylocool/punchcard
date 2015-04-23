@@ -33,7 +33,7 @@ ActiveAdmin.register Punchcard do
         @checkin_lng = checkin_location[1]
         checkin_geo_loc = Geokit::GeoLoc.new(lat: @checkin_lat, lng: @checkin_lng)
         checkin_distance = checkin_geo_loc.distance_to(project_geo_loc, units: :kms)
-        @checkin_title = "Checkin @ #{punchcard.checkin} - #{checkin_distance.round(2)} km"
+        @checkin_title = "Checkin @ #{punchcard.checkin.strftime('%Y-%m-%d %H:%M:%S')} - #{checkin_distance.round(2)} km"
       else
 
       end
@@ -44,7 +44,7 @@ ActiveAdmin.register Punchcard do
         @checkout_lng = checkout_location[1]
         checkout_geo_loc = Geokit::GeoLoc.new(lat: @checkout_lat, lng: @checkout_lng)
         checkout_distance = checkout_geo_loc.distance_to(project_geo_loc, units: :kms)
-        @checkout_title = "Checkout @ #{punchcard.checkout} - #{checkout_distance.round(2)} km"
+        @checkout_title = "Checkout @ #{punchcard.checkout.strftime('%Y-%m-%d %H:%M:%S')} - #{checkout_distance.round(2)} km"
       else
 
       end
@@ -68,6 +68,7 @@ ActiveAdmin.register Punchcard do
   scope :fine do |punchcards|
     punchcards.where('fine > 0')
   end
+
 
   index do
     selectable_column
@@ -114,7 +115,6 @@ ActiveAdmin.register Punchcard do
     column 'Total/Normal/Overtime Minutes', :total_hours do |punchcard|
       # hourly
       #"#{punchcard.total_hours} / #{punchcard.normal_work_hours} / #{punchcard.overtime_work_hours}"
-
       # minutely
       "#{punchcard.total_work_minutes} / #{punchcard.normal_work_minutes} / #{punchcard.overtime_work_minutes}"
     end
@@ -127,8 +127,12 @@ ActiveAdmin.register Punchcard do
     column :map do |punchcard|
       link_to 'View', "punchcards/map/#{punchcard.id}"
     end
-    column :trail do |punchcard|
-      link_to "#{punchcard.versions.length.to_i}", "punchcards/#{punchcard.id}/history"
+    column :changes do |punchcard|
+      #if current_user.role? :Root || :Administrator
+        link_to "#{punchcard.versions.length.to_i}", "#{admin_audit_trails_path}/item_type/Punchcard/item_id/#{punchcard.id}"
+      #else
+      #  "#{punchcard.versions.length.to_i}"
+      #end
     end
     column :remarks do |punchcard|
       content_tag(:div, "#{punchcard.remarks}", style: 'color:red')
@@ -139,18 +143,18 @@ ActiveAdmin.register Punchcard do
   sidebar :version, only: :show do
     #if current_user.role? :Root || :Administrator
       @punchcard = Punchcard.find(params[:id])
-      #@versions = @punchcard.versions
+      @versions = @punchcard.versions
+      #@versions = PaperTrail::Version.where(item_id: params[:id], item_type: 'Punchcard').order('id desc')
       render 'layouts/version'
     #end
   end
 
-  member_action :history do
+  #member_action :history do
     #if current_user.role? :Root || :Administrator
-      @punchcard = Punchcard.find(params[:id])
-      @versions = @punchcard.versions
-      render 'layouts/history'
+      #@versions = PaperTrail::Version.where(item_id: params[:id], item_type: 'Punchcard').order('id desc')
+      #render 'layouts/history'
     #end
-  end
+  #end
 
   filter :company, as: :select, collection: proc {
                     if current_user.role? :Root
