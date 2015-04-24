@@ -62,7 +62,7 @@ ActiveAdmin.register_page 'Payrolls' do
           @punchcards.each do |punchcard|
             punchcard.calculate
             work = @items[punchcard.checkin.day - 1]
-            work.punchcard = punchcard
+            work.add_punchcard(punchcard)
 
             @amount += punchcard.amount_minutes
             @amount_deduction += punchcard.amount_deduction_minutes
@@ -95,37 +95,7 @@ ActiveAdmin.register_page 'Payrolls' do
           # all workers
           workers = Worker.where(company_id: current_user.current_company.id)
           workers.each do |worker|
-            @punchcards = Punchcard.where('worker_id = ? and checkin >= ? and checkout <= ?', worker.id, start_date, stop_date)
-            @amount = 0
-            @amount_deduction = 0
-            @amount_normal = 0
-            @amount_overtime = 0
-            @days_worked = 0
-            @items = []
-
-            (0..days - 1).each do |index|
-              item = PayrollWorkItem.new
-              item.date = Date.new year, month, index + 1
-              @items.push item
-            end
-
-            if @punchcards.count > 0
-              @days_worked = @punchcards.count
-              @punchcards.each do |punchcard|
-                punchcard.calculate
-                work = @items[punchcard.checkin.day - 1]
-                work.punchcard = punchcard
-
-                @amount += punchcard.amount_minutes
-                @amount_deduction += punchcard.amount_deduction_minutes
-                @amount_normal += punchcard.amount_normal_minutes
-                @amount_overtime += punchcard.amount_overtime_minutes
-              end
-            end
-
-            payroll_id = worker.name.tr(' ', '_') + '_' + @period.strftime('%B_%Y')
-            pdf = PayrollPdf.new(payroll_id, worker, @period, @days_worked, @amount, @amount_normal, @amount_overtime, @amount_deduction, view_context)
-
+            pdf = generate_pdf(worker, @period, start_date, stop_date)
             zio.put_next_entry("payroll_#{payroll_id}.pdf")
             zio << pdf.render
           end
@@ -156,7 +126,7 @@ ActiveAdmin.register_page 'Payrolls' do
           @punchcards.each do |punchcard|
             punchcard.calculate
             work = @items[punchcard.checkin.day - 1]
-            work.punchcard = punchcard
+            work.add_punchcard(punchcard)
 
             @amount += punchcard.amount_minutes
             @amount_deduction += punchcard.amount_deduction_minutes
@@ -173,6 +143,39 @@ ActiveAdmin.register_page 'Payrolls' do
           send_data pdf.render, filename: "payroll_#{payroll_id}.pdf", type: 'application/pdf', disposition: 'inline'
         end
       end
+    end
+
+    def generate_pdf(worker, period, start_date, stop_date)
+      punchcards = Punchcard.where('worker_id = ? and checkin >= ? and checkout <= ?', worker.id, start_date, stop_date)
+      amount = 0
+      amount_deduction = 0
+      amount_normal = 0
+      amount_overtime = 0
+      days_worked = 0
+      items = []
+
+      (0..days - 1).each do |index|
+        item = PayrollWorkItem.new
+        item.date = Date.new year, month, index + 1
+        items.push item
+      end
+
+      if punchcards.count > 0
+        days_worked = punchcards.count
+        punchcards.each do |punchcard|
+          punchcard.calculate
+          work = items[punchcard.checkin.day - 1]
+          work.add_punchcard(punchcard)
+
+          amount += punchcard.amount_minutes
+          amount_deduction += punchcard.amount_deduction_minutes
+          amount_normal += punchcard.amount_normal_minutes
+          amount_overtime += punchcard.amount_overtime_minutes
+        end
+      end
+
+      payroll_id = worker.name.tr(' ', '_') + '_' + period.strftime('%B_%Y')
+      pdf = PayrollPdf.new(payroll_id, worker, period, days_worked, amount, amount_normal, amount_overtime, amount_deduction, view_context)
     end
 
     def model_params

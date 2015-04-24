@@ -44,9 +44,9 @@ ActiveAdmin.register CompanySetting do
       f.input :dinner_hour, label: '1 hr dinner reduction if stop work after 10pm'
       f.input :distance_check, label: 'Distance check in km from project location'
       f.input :company, as: :select, include_blank: false, collection:
-                            if current_user.role? :Root
+                            if current_user.role == 'Root'
                               Company.all.map { |u| ["#{u.name}", u.id] }
-                            elsif current_user.role? :Administrator
+                            elsif current_user.role == 'Administrator'
                               usercompany = UserCompany.find_by_user_id(current_user.id)
                               if usercompany.present?
                                 Company.all.where(id: usercompany.company_id).map { |u| ["#{u.name}", u.id] }

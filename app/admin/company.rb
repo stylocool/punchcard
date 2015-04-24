@@ -8,7 +8,7 @@ ActiveAdmin.register Company do
   controller do
     def find_resource
       @company = Company.find(params[:id])
-      return @company if current_user.role? :Root
+      return @company if current_user.role == 'Root'
       if current_user.current_company.present?
         return @company if current_user.current_company.id == @company.id
         :access_denied

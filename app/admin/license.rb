@@ -4,7 +4,7 @@ ActiveAdmin.register License do
   controller do
     def find_resource
       @license = License.where(id: params[:id]).first!
-      return @license if current_user.role? :Root
+      return @license if current_user.role == 'Root'
       @license.company_id == current_user.company.id ? @license : :access_denied
     end
   end

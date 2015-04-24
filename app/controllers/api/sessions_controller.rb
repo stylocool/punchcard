@@ -49,12 +49,13 @@ class Api::SessionsController < Devise::SessionsController
 
           if company.license.present?
             if company.license.expired_at > Time.now
-              #if resource.role? (:Root || :Administrator || :Scanner)
+              puts("**********"+resource.role)
+              if resource.role == 'Root' || resource.role == 'Administrator' || resource.role == 'Scanner'
                 sign_in(resource, store: false)
                 render :json => { user: { id: resource.id, email: resource.email, :auth_token => resource.authentication_token, :auth_token_expiry => resource.authentication_token_expiry } }, success: true, status: :created
-              #else
-              #  unauthorized_attempt
-              #end
+              else
+                unauthorized_attempt
+              end
             else
               company_license_expired
             end
@@ -101,7 +102,7 @@ class Api::SessionsController < Devise::SessionsController
     render json: { success: false, message: 'You do not have a valid license to use this service. Please contact PunchCard.' }, status: 401
   end
 
-  def authorized_attempt
+  def unauthorized_attempt
     warden.custom_failure!
     render json: { success: false, message: 'You are not authorized to use this application.' }, status: 401
   end

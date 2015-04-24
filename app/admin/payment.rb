@@ -34,7 +34,7 @@ ActiveAdmin.register Payment do
 
     def find_resource
       @payment = Payment.where(id: params[:id]).first!
-      return @payment if current_user.role? :Root
+      return @payment if current_user.role == 'Root'
       if current_user.current_company.present?
         if @payment.company_id == current_user.current_company.id
           @payment
@@ -77,9 +77,9 @@ ActiveAdmin.register Payment do
   form do |f|
     f.inputs 'Payment Details' do
       f.input :company, as: :select, include_blank: false, collection:
-        if current_user.role? :Root
+        if current_user.role == 'Root'
           Company.all.map { |u| ["#{u.name}", u.id] }
-        elsif current_user.role? :Administrator
+        elsif current_user.role == 'Administrator'
           user_company = UserCompany.find_by_user_id(current_user.id)
           if user_company.present?
             Company.all.where(id: user_company.company_id).map { |u| ["#{u.name}", u.id] }

@@ -2,7 +2,7 @@ ActiveAdmin.register_page 'Dashboard' do
   menu priority: 1, label: proc { I18n.t('active_admin.dashboard') }
 
   content title: proc { I18n.t('active_admin.dashboard') } do
-    if current_user.role? :Root
+    if current_user.role == 'Root'
       # show payment
       columns do
         column do
@@ -49,7 +49,7 @@ ActiveAdmin.register_page 'Dashboard' do
         end
       end
 
-    elsif current_user.role? :Administrator
+    elsif current_user.role == 'Administrator'
 
       # license check
       if current_user.current_company.present? && current_user.current_company.license.present?
@@ -151,7 +151,7 @@ ActiveAdmin.register_page 'Dashboard' do
         end
       end
 
-    elsif current_user.role? :User
+    elsif current_user.role == 'User'
       # show audit trail
       columns do
         column do
