@@ -1,3 +1,4 @@
+require 'zip'
 ActiveAdmin.register_page 'Payrolls' do
 
   content only: :index do
