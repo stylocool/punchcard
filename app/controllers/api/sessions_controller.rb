@@ -49,12 +49,12 @@ class Api::SessionsController < Devise::SessionsController
 
           if company.license.present?
             if company.license.expired_at > Time.now
-              if resource.role? (:Root || :Administrator || :Scanner)
+              #if resource.role? (:Root || :Administrator || :Scanner)
                 sign_in(resource, store: false)
                 render :json => { user: { id: resource.id, email: resource.email, :auth_token => resource.authentication_token, :auth_token_expiry => resource.authentication_token_expiry } }, success: true, status: :created
-              else
-                unauthorized_attempt
-              end
+              #else
+              #  unauthorized_attempt
+              #end
             else
               company_license_expired
             end
