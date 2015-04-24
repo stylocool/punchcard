@@ -2,8 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34397c06-9160-4a75-8867-56065300fcde" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/admin/payroll.rb" afterPath="$PROJECT_DIR$/app/admin/payroll.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/config/initializers/rubyzip.rb" afterPath="$PROJECT_DIR$/config/initializers/rubyzip.rb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/admin/payrolls/view_payroll.html.erb" afterPath="$PROJECT_DIR$/app/views/admin/payrolls/view_payroll.html.erb" />
     </list>
     <ignored path="activeadmin.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -81,7 +80,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="payroll.rb" pinned="false" current-in-tab="true">
+      <file leaf-file-name="payroll.rb" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/admin/payroll.rb">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
@@ -91,11 +90,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="view_payroll.html.erb" pinned="false" current-in-tab="false">
+      <file leaf-file-name="view_payroll.html.erb" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/views/admin/payrolls/view_payroll.html.erb">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-15.625">
-              <caret line="25" column="56" selection-start-line="25" selection-start-column="56" selection-end-line="25" selection-end-column="56" />
+            <state vertical-scroll-proportion="0.7223796">
+              <caret line="51" column="112" selection-start-line="51" selection-start-column="112" selection-end-line="51" selection-end-column="112" />
               <folding>
                 <element signature="n#style#0;n#td#0;n#tr#1;n#tbody#0;n#table#0;n#div#0;n#div#0;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
                 <element signature="n#style#0;n#td#1;n#tr#1;n#tbody#0;n#table#0;n#div#0;n#div#0;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
@@ -204,9 +203,9 @@
         <option value="$PROJECT_DIR$/app/admin/license.rb" />
         <option value="$PROJECT_DIR$/app/admin/payment.rb" />
         <option value="$PROJECT_DIR$/app/admin/payrolls/payroll_work_item.rb" />
-        <option value="$PROJECT_DIR$/app/views/admin/payrolls/view_payroll.html.erb" />
         <option value="$PROJECT_DIR$/config/initializers/rubyzip.rb" />
         <option value="$PROJECT_DIR$/app/admin/payroll.rb" />
+        <option value="$PROJECT_DIR$/app/views/admin/payrolls/view_payroll.html.erb" />
       </list>
     </option>
   </component>
@@ -1429,18 +1428,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/admin/payrolls/view_payroll.html.erb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-15.625">
-          <caret line="25" column="56" selection-start-line="25" selection-start-column="56" selection-end-line="25" selection-end-column="56" />
-          <folding>
-            <element signature="n#style#0;n#td#0;n#tr#1;n#tbody#0;n#table#0;n#div#0;n#div#0;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#td#1;n#tr#1;n#tbody#0;n#table#0;n#div#0;n#div#0;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#td#2;n#tr#1;n#tbody#0;n#table#0;n#div#0;n#div#0;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/config/initializers/rubyzip.rb">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -1454,6 +1441,18 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="13" selection-start-line="0" selection-start-column="13" selection-end-line="0" selection-end-column="13" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/admin/payrolls/view_payroll.html.erb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.7223796">
+          <caret line="51" column="112" selection-start-line="51" selection-start-column="112" selection-end-line="51" selection-end-column="112" />
+          <folding>
+            <element signature="n#style#0;n#td#0;n#tr#1;n#tbody#0;n#table#0;n#div#0;n#div#0;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#td#1;n#tr#1;n#tbody#0;n#table#0;n#div#0;n#div#0;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#td#2;n#tr#1;n#tbody#0;n#table#0;n#div#0;n#div#0;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
