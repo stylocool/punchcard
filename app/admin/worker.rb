@@ -2,9 +2,21 @@ ActiveAdmin.register Worker do
   permit_params :name, :race, :gender, :nationality, :contact, :work_permit, :company_id, :worker_type, :trade, :basic_pay
 
   controller do
+    def scoped_collection
+      if current_user.role == 'Root'
+        Worker.all.page(params[:page]).per(20)
+      else
+        if current_user.current_company.present?
+          Worker.where(company_id: current_user.current_company.id).page(params[:page]).per(20)
+        else
+          Worker.none
+        end
+      end
+    end
+
     def find_resource
       @worker = Worker.where(id: params[:id]).first!
-      return @worker if current_user.role? :Root
+      return @worker if current_user.role == 'Root'
       @worker.company_id == current_user.current_company.id ? @worker : :access_denied
     end
   end
@@ -105,9 +117,9 @@ ActiveAdmin.register Worker do
       f.input :contact, as: :number
       f.input :work_permit
       f.input :company, as: :select, include_blank: false, collection:
-                          if current_user.role? :Root
+                          if current_user.role == 'Root'
                             Company.all.map { |u| ["#{u.name}", u.id] }
-                          elsif current_user.role? :Administrator
+                          elsif current_user.role == 'Administrator'
                             usercompany = UserCompany.find_by_user_id(current_user.id)
                             usercompany.present? ? Company.all.where(id: usercompany.company_id).map { |u| ["#{u.name}", u.id] } : Company.none
                           end

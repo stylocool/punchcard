@@ -5,6 +5,19 @@ ActiveAdmin.register Payment do
   after_save :calculate_amount
 
   controller do
+
+    def scoped_collection
+      if current_user.role == 'Root'
+        Payment.all.page(params[:page]).per(20)
+      else
+        if current_user.current_company.present?
+          Payment.where(company_id: current_user.current_company.id).page(params[:page]).per(20)
+        else
+          Payment.none
+        end
+      end
+    end
+
     def new
       @payment = Payment.new
       @payment.total_workers = current_user.current_company.total_workers
@@ -33,14 +46,10 @@ ActiveAdmin.register Payment do
     end
 
     def find_resource
-      @payment = Payment.where(id: params[:id]).first!
+      @payment = Payment.find(params[:id])
       return @payment if current_user.role == 'Root'
       if current_user.current_company.present?
-        if @payment.company_id == current_user.current_company.id
-          @payment
-        else
-          :access_denied
-        end
+        @payment.company_id == current_user.current_company.id ? @payment : :access_denied
       else
         :access_denied
       end

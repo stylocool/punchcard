@@ -2,12 +2,26 @@ ActiveAdmin.register Project do
   permit_params :name, :location, :company_id
 
   controller do
-    def find_resource
-      @project = Project.where(id: params[:id]).first!
-      if current_user.role? :Root
-        @project
+
+    def scoped_collection
+      if current_user.role == 'Root'
+        Project.all.page(params[:page]).per(20)
       else
+        if current_user.current_company.present?
+          Project.where(company_id: current_user.current_company.id).page(params[:page]).per(20)
+        else
+          Project.none
+        end
+      end
+    end
+
+    def find_resource
+      @project = Project.find(params[:id])
+      return @project if current_user.role == 'Root'
+      if current_user.current_company.present?
         @project.company_id == current_user.current_company.id ? @project : :access_denied
+      else
+        :access_denied
       end
     end
   end
@@ -29,9 +43,9 @@ ActiveAdmin.register Project do
   filter :name
   filter :location
   filter :company, as: :select, include_blank: false, collection: proc {
-                   if current_user.role? :Root
+                   if current_user.role == 'Root'
                      Company.all.map { |u| ["#{u.name}", u.id] }
-                   elsif current_user.role? :Administrator
+                   elsif current_user.role == 'Administrator'
                      user_company = UserCompany.find_by_user_id(current_user.id)
                      user_company.present? ? Company.all.where(id: user_company.company_id).map { |u| ["#{u.name}", u.id] } : Company.none
                    end
@@ -42,9 +56,9 @@ ActiveAdmin.register Project do
       f.input :name
       f.input :location, label: 'Location (lat,lng). Use Google Map to find the coordinates.)'
       f.input :company, as: :select, include_blank: false, collection:
-                          if current_user.role? :Root
+                          if current_user.role == 'Root'
                             Company.all.map { |u| ["#{u.name}", u.id] }
-                          elsif current_user.role? :Administrator
+                          elsif current_user.role == 'Administrator'
                             user_company = UserCompany.find_by_user_id(current_user.id)
                             user_company.present? ? Company.all.where(id: user_company.company_id).map { |u| ["#{u.name}", u.id] } : Company.none
                           end

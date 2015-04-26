@@ -16,7 +16,7 @@ ActiveAdmin.register_page 'Payrolls' do
       @page_title = 'Payrolls'
       @payroll = Payroll.new
       @payroll.type = params[:type]
-      if current_user.role? :Root
+      if current_user.role == 'Root'
         @objects = Worker.all
       else
         @objects = Worker.where(company_id: current_user.current_company.id)

@@ -7,7 +7,6 @@ class Ability
     user ||= User.new # guest user (not logged in)
     if user.role? :Root
       can :manage, :all
-      can :manage, PaperTrail::Version
 
     elsif user.role? :Administrator
 
@@ -35,24 +34,15 @@ class Ability
         projects = Project.where(company_id: user.current_company.id)
         if projects.present?
           can [:read, :update, :destroy], Project, company_id: user.current_company.id
-
-          can :manage, ActiveAdmin::Page, name: "Reports", namespace_name: "admin"
-
-          if user.current_company.license.present?
-            can :create, Project
-          end
+          can :create, Project
         else
-          if user.current_company.license.present?
-            can :create, Project
-          end
+          can :create, Project
         end
 
         punchcards = Punchcard.where(company_id: user.current_company.id)
         if punchcards.present?
           can [:read, :update, :destroy], Punchcard, company_id: user.current_company.id
-          if user.current_company.license.present?
-            can :create, Punchcard
-          end
+          can :create, Punchcard
         else
           can :create, Punchcard
         end
@@ -60,27 +50,22 @@ class Ability
         workers = Worker.where(company_id: user.current_company.id).count
         if workers > 0
           can [:read, :update, :destroy], Worker, company_id: user.current_company.id
-
-          can :manage, ActiveAdmin::Page, name: "Payrolls", namespace_name: "admin"
-
           # check if no. of workers exceeded license
           if user.current_company.license.present?
             if workers < user.current_company.license.total_workers
               can :create, Worker
             end
           end
+
+          can :manage, ActiveAdmin::Page, name: "Reports", namespace_name: "admin"
+          can :manage, ActiveAdmin::Page, name: "Payrolls", namespace_name: "admin"
         else
-          if user.current_company.license.present?
-            can :create, Worker
-          end
+          can :create, Worker
         end
-
         can :manage, PaperTrail::Version
-
       else
-        can [:create], Company
+        can :create, Company
       end
-
       can :read, ActiveAdmin::Page, name: "Dashboard"
 
     elsif user.role? :User
@@ -102,13 +87,6 @@ class Ability
         punchcards = Punchcard.where(company_id: user.current_company.id)
         if punchcards.present?
           can :read, Punchcard, company_id: user.current_company.id
-          #if user.current_company.license.present?
-          #  can :create, Punchcard
-          #end
-        #else
-          #if user.current_company.license.present?
-          #  can :manage, Punchcard
-          #end
         end
 
         workers = Worker.where(company_id: user.current_company.id)
@@ -122,8 +100,8 @@ class Ability
       can :read, ActiveAdmin::Page, name: "Dashboard"
 
     elsif user.role? :Scanner
-      can :read, ActiveAdmin::Page, name: "Dashboard"
       can [:read, :update], User, id: user.id
+      can :read, ActiveAdmin::Page, name: "Dashboard"
     end
   end
 end

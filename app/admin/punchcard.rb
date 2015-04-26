@@ -3,23 +3,27 @@ ActiveAdmin.register Punchcard do
 
   controller do
 
-    #def scoped_collection
-    #  if current_user.role? :Root
-    #    Punchcard.all.page(params[:page]).per(20)
-    #  else
-    #    Punchcard.where('company_id = ?', current_user.current_company.id).page(params[:page]).per(20)
-    #  end
-    #end
+    def scoped_collection
+      if current_user.role == 'Root'
+        Punchcard.all.page(params[:page]).per(20)
+      else
+        if current_user.current_company.present?
+          Punchcard.where(company_id: current_user.current_company.id).page(params[:page]).per(20)
+        else
+          Punchcard.none
+        end
+      end
+    end
 
     def find_resource
-      @punchcard = Punchcard.where(id: params[:id]).first
+      @punchcard = Punchcard.find(params[:id])
 
-      if current_user.role? :Root || :Administrator
+      if current_user.role == 'Root' || current_user.role == 'Administrator'
         @versions = @punchcard.versions
         @punchcard = @punchcard.versions[params[:version].to_i].reify if params[:version]
       end
 
-      return @punchcard if current_user.role? :Root
+      return @punchcard if current_user.role == 'Root'
       if current_user.current_company.present?
         @punchcard.company_id == current_user.current_company.id ? @punchcard : :access_denied
       else
@@ -150,38 +154,31 @@ ActiveAdmin.register Punchcard do
   end
 
   sidebar :version, only: :show do
-    #if current_user.role? :Root || :Administrator
+    if current_user.role == 'Root' || current_user.role == 'Administrator'
       @punchcard = Punchcard.find(params[:id])
-      @versions = @punchcard.versions
+      #@versions = @punchcard.versions
       #@versions = PaperTrail::Version.where(item_id: params[:id], item_type: 'Punchcard').order('id desc')
       render 'layouts/version'
-    #end
+    end
   end
 
-  #member_action :history do
-    #if current_user.role? :Root || :Administrator
-      #@versions = PaperTrail::Version.where(item_id: params[:id], item_type: 'Punchcard').order('id desc')
-      #render 'layouts/history'
-    #end
-  #end
-
   filter :company, as: :select, collection: proc {
-                    if current_user.role? :Root
+                    if current_user.role == 'Root'
                       Company.all.map { |u| ["#{u.name}", u.id] }
-                    elsif current_user.role? :Administrator
+                    elsif current_user.role == 'Administrator'
                       user_company = UserCompany.find_by_user_id(current_user.id)
                       user_company.present? ? Company.all.where(id: user_company.company_id).map { |u| ["#{u.name}", u.id] } : Company.none
                     end
                  }
   filter :project, as: :select, collection: proc {
-                    if current_user.role? :Root
+                    if current_user.role == 'Root'
                       Project.all.map { |u| ["#{u.name}", u.id] }
                     else
                      current_user.current_company.present? ? Project.all.where(company_id: current_user.current_company.id).map { |u| ["#{u.name}", u.id] } : Project.none
                     end
                  }
   filter :worker, as: :select, collection: proc {
-                    if current_user.role? :Root
+                    if current_user.role == 'Root'
                       Worker.all.map { |u| ["#{u.name}", u.id] }
                     else
                       current_user.current_company.present? ? Worker.all.where(company_id: current_user.current_company.id).map { |u| ["#{u.name}", u.id] } : Worker.none
@@ -197,22 +194,22 @@ ActiveAdmin.register Punchcard do
   form do |f|
     f.inputs 'Punchcard Details' do
       f.input :company, as: :select, include_blank: false, collection:
-                          if current_user.role? :Root
+                          if current_user.role == 'Root'
                             Company.all.map { |u| ["#{u.name}", u.id] }
-                          elsif current_user.role? :Administrator
+                          elsif current_user.role == 'Administrator'
                             user_company = UserCompany.find_by_user_id(current_user.id)
                             user_company.present? ? Company.all.where(id: user_company.company_id).map { |u| ["#{u.name}", u.id] } : Company.none
                           end
 
       f.input :project, as: :select, include_blank: false, collection:
-                          if current_user.role? :Root
+                          if current_user.role == 'Root'
                             Project.all.map { |u| ["#{u.name}", u.id] }
                           else
                             current_user.current_company.present? ? Project.all.where(company_id: current_user.current_company.id).map { |u| ["#{u.name}", u.id] } : Project.none
                           end
 
       f.input :worker, as: :select, include_blank: false, collection:
-                         if current_user.role? :Root
+                         if current_user.role == 'Root'
                            Worker.all.map { |u| ["#{u.name}", u.id] }
                          else
                            current_user.current_company.present? ? Worker.all.where(company_id: current_user.current_company.id).map { |u| ["#{u.name}", u.id] } : Worker.none

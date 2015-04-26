@@ -2,9 +2,9 @@ ActiveAdmin.register PaperTrail::Version, as: "Audit Trail" do
 
   controller do
     def scoped_collection
-      if current_user.role? :Root
+      if current_user.role == 'Root'
         PaperTrail::Version.all.page(params[:page]).per(20)
-      elsif current_user.role? :Administrator
+      elsif current_user.role == 'Administrator'
         PaperTrail::Version.where('whodunnit in (select user_id::text from user_companies where company_id = ' + current_user.current_company.id.to_s + ')').order('id desc').page(params[:page]).per(20)
       end
     end

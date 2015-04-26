@@ -26,19 +26,22 @@ class Api::WorkersController < ApplicationController
     else
       usercompany = UserCompany.where(user_id: current_user.id).first
       company = Company.find(usercompany.company_id)
-
-      # create new worker if work permit not found
-      @worker = Worker.new()
-      @worker.name = "UNKNOWN"
-      @worker.race = ""
-      @worker.gender = ""
-      @worker.nationality = ""
-      @worker.contact = "UNKNOWN"
-      @worker.work_permit = params[:id]
-      @worker.worker_type = "Worker"
-      @worker.company_id = company.id
-      @worker.basic_pay = 20
-      @worker.save
+      #license = License.where(company_id: company.id).first
+      #workers_total = Worker.where(company_id: company.id).count
+      #if (workers_total) + 1 <= license.total_workers
+        # create new worker if work permit not found
+        @worker = Worker.new()
+        @worker.name = "UNKNOWN"
+        @worker.race = ""
+        @worker.gender = ""
+        @worker.nationality = ""
+        @worker.contact = "UNKNOWN"
+        @worker.work_permit = params[:id]
+        @worker.worker_type = "Worker"
+        @worker.company_id = company.id
+        @worker.basic_pay = 20
+        @worker.save
+      #end
     end
   end
 end

@@ -2,10 +2,27 @@ ActiveAdmin.register License do
   permit_params :name, :total_workers, :cost_per_worker, :company_id, :expired_at
 
   controller do
+    def scoped_collection
+      if current_user.role == 'Root'
+        License.all.page(params[:page]).per(20)
+      else
+        if current_user.current_company.license.present?
+          License.where(id: current_user.current_company.license.id).page(params[:page]).per(20)
+        else
+          License.none
+        end
+      end
+    end
+
     def find_resource
-      @license = License.where(id: params[:id]).first!
+      @license = License.find(params[:id])
       return @license if current_user.role == 'Root'
-      @license.company_id == current_user.company.id ? @license : :access_denied
+      if current_user.current_company.present?
+        @license.company_id == current_user.current_company.id ? @license : :access_denied
+      else
+        :access_denied
+      end
+
     end
   end
 

@@ -8,52 +8,42 @@ ActiveAdmin.register User do
   before_destroy :remove_user_company
 
   controller do
-    def index
-      index! do |format|
-        if current_user.role? :Root
-          @users = User.all.page(params[:page])
-        elsif current_user.role? :Administrator
-          current_user.current_company.present? ?
-              @users = User.where('id in (select user_id from user_companies where company_id = ?)', current_user.current_company.id).page(params[:page]) :
-              @users = User.where(id: current_user.id).page(params[:page])
-        end
-        format.html
+    def scoped_collection
+      if current_user.role == 'Root'
+        User.all.page(params[:page]).per(20)
+      elsif current_user.role == 'Administrator'
+        current_user.current_company.present? ?
+            User.where('id in (select user_id from user_companies where company_id = ?)', current_user.current_company.id).page(params[:page]).per(20) :
+            User.where(id: current_user.id).page(params[:page]).per(20)
+      else
+        User.find(current_user.id)
       end
     end
 
     def find_resource
       @user = User.find(params[:id])
-      if current_user.role? :Root
-        @user
-      elsif current_user.role? :Administrator
+      return @user if current_user.role == 'Root'
+      if current_user.role == 'Administrator'
         if current_user.current_company.present?
           user_company = UserCompany.where(company_id: current_user.current_company.id, user_id: @user.id)
-          if user_company.present?
-            @user
-          else
-            :access_denied
-          end
+          user_company.present? ? @user : :access_denied
         else
           :access_denied
         end
-      elsif @current_user.role? :User || :Scanner
-        if current_user.id == @user.id
-          @user
-        else
-          :access_denied
-        end
+      else
+        current_user.id == @user.id ? @user : :access_denied
       end
     end
 
     def company_exist(company)
-      return if current_user.role != :Administrator
+      return if current_user.role != 'Administrator'
       return if current_user.current_company.present?
       flash.now[alert: 'Please create a company before adding new users']
     end
 
     def add_user_company(user)
       # only allow administrator to add additional users
-      if current_user.role? :Administrator
+      if current_user.role == 'Administrator'
         user_company = UserCompany.new(company_id: current_user.current_company.id, user_id: user.id)
         user_company.save
       end
@@ -66,7 +56,7 @@ ActiveAdmin.register User do
         flash.now[alert: 'Cannot delete itself']
         return false
       else
-        if user.role?(:Root) || user.role?(:Administrator)
+        if user.role == 'Root' || user.role = 'Administrator'
           # delete company will cascade delete to all e.g. company_setting, project, etc
           user_companies = UserCompany.where(user_id: user.id)
           if user_companies.count > 0

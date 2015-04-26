@@ -26,7 +26,7 @@ ActiveAdmin.register_page 'Reports' do
 
       case report_params[:report_name]
       when 'Daily Punchcards'
-        if current_user.role? :Root
+        if current_user.role == 'Root'
           if (report_params[:project_id].present? && report_params[:project_id].to_i > 0)
             @metric = Punchcard.where(checkin: start_date..stop_date, project_id: report_params[:project_id].to_i).group_by_day(:checkin).count
           else
@@ -40,14 +40,14 @@ ActiveAdmin.register_page 'Reports' do
           end
         end
       when 'Daily User Logins'
-        if current_user.role? :Root
+        if current_user.role == 'Root'
           @metric = PaperTrail::Version.where('item_type = ? and event = ? and (created_at between ? and ?) and object_changes like ?', 'User', 'update', start_date, stop_date, '%sign_in_count%').group_by_day(:created_at).count
         else
           @metric = PaperTrail::Version.where('whodunnit in (select user_id::text from user_companies where company_id = ?) and item_type = ? and event = ? and (created_at between ? and ?) and object_changes like ?', current_user.current_company.id, 'User', 'update', start_date, stop_date, '%sign_in_count%').group_by_day(:created_at).count
         end
       when 'Daily Payouts'
 
-        if current_user.role? :Root
+        if current_user.role == 'Root'
           if (report_params[:project_id].present? && report_params[:project_id].to_i > 0)
             @punchcards = Punchcard.where(checkin: start_date..stop_date, project_id: report_params[:project_id].to_i)
           else

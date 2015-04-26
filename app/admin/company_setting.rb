@@ -2,20 +2,26 @@ ActiveAdmin.register CompanySetting do
   permit_params :name, :overtime_rate, :working_hours, :lunch_hour, :dinner_hour, :distance_check, :company_id
 
   controller do
-    def find_resource
-      @company_setting = CompanySetting.where(id: params[:id]).first!
-      if current_user.role? :Root
-        @company_setting
+
+    def scoped_collection
+      if current_user.role == 'Root'
+        CompanySetting.all.page(params[:page]).per(20)
       else
-        if current_user.current_company.present?
-          if @company_setting.company_id == current_user.current_company.id
-            @company_setting
-          else
-            :access_denied
-          end
+        if current_user.current_company.present? && current_user.current_company.company_setting.present?
+          CompanySetting.where(id: current_user.current_company.company_setting.id).page(params[:page]).per(20)
         else
-          :access_denied
+          CompanySetting.none
         end
+      end
+    end
+
+    def find_resource
+      @company_setting = CompanySetting.find(params[:id])
+      return @company_setting if current_user.role? :Root
+      if current_user.current_company.present?
+        @company_setting.company_id == current_user.current_company.id ? @company_setting : :access_denied
+      else
+        :access_denied
       end
     end
   end

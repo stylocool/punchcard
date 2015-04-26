@@ -6,12 +6,23 @@ ActiveAdmin.register Company do
   after_destroy :remove_current_company
 
   controller do
+    def scoped_collection
+      if current_user.role == 'Root'
+        Company.all.page(params[:page]).per(20)
+      else
+        if current_user.current_company.present?
+          Company.where(id: current_user.current_company.id)
+        else
+          Company.none
+        end
+      end
+    end
+
     def find_resource
       @company = Company.find(params[:id])
       return @company if current_user.role == 'Root'
       if current_user.current_company.present?
-        return @company if current_user.current_company.id == @company.id
-        :access_denied
+        current_user.current_company.id == @company.id ? @company : :access_denied
       else
         :access_denied
       end
