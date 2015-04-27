@@ -30,22 +30,22 @@ ActiveAdmin.register_page 'Reports' do
       when 'Daily Punchcards'
         if current_user.role == 'Root'
           if (report_params[:project_id].present? && report_params[:project_id].to_i > 0)
-            @metric = Punchcard.where(checkin: start_date..stop_date, project_id: report_params[:project_id].to_i).group_by_day(:checkin).count
+            @metric = Punchcard.where(checkin: start_date..stop_date, project_id: report_params[:project_id].to_i).group_by_day(:checkin, format: '%Y-%m-%d').count
           else
-            @metric = Punchcard.where(checkin: start_date..stop_date).group_by_day(:checkin).count
+            @metric = Punchcard.where(checkin: start_date..stop_date).group_by_day(:checkin, format: '%Y-%m-%d').count
           end
         else
           if (report_params[:project_id].present? && report_params[:project_id].to_i > 0)
-            @metric = Punchcard.where(checkin: start_date..stop_date, company_id: current_user.current_company.id, project_id: report_params[:project_id].to_i).group_by_day(:checkin).count
+            @metric = Punchcard.where(checkin: start_date..stop_date, company_id: current_user.current_company.id, project_id: report_params[:project_id].to_i).group_by_day(:checkin, format: '%Y-%m-%d').count
           else
-            @metric = Punchcard.where(checkin: start_date..stop_date, company_id: current_user.current_company.id).group_by_day(:checkin).count
+            @metric = Punchcard.where(checkin: start_date..stop_date, company_id: current_user.current_company.id).group_by_day(:checkin, format: '%Y-%m-%d').count
           end
         end
       when 'Daily User Logins'
         if current_user.role == 'Root'
-          @metric = PaperTrail::Version.where('item_type = ? and event = ? and (created_at between ? and ?) and object_changes like ?', 'User', 'update', start_date, stop_date, '%sign_in_count%').group_by_day(:created_at).count
+          @metric = PaperTrail::Version.where('item_type = ? and event = ? and (created_at between ? and ?) and object_changes like ?', 'User', 'update', start_date, stop_date, '%sign_in_count%').group_by_day(:created_at, format: '%Y-%m-%d').count
         else
-          @metric = PaperTrail::Version.where('whodunnit in (select user_id::text from user_companies where company_id = ?) and item_type = ? and event = ? and (created_at between ? and ?) and object_changes like ?', current_user.current_company.id, 'User', 'update', start_date, stop_date, '%sign_in_count%').group_by_day(:created_at).count
+          @metric = PaperTrail::Version.where('whodunnit in (select user_id::text from user_companies where company_id = ?) and item_type = ? and event = ? and (created_at between ? and ?) and object_changes like ?', current_user.current_company.id, 'User', 'update', start_date, stop_date, '%sign_in_count%').group_by_day(:created_at, format: '%Y-%m-%d').count
         end
       when 'Daily Payouts'
 
