@@ -220,7 +220,7 @@ ActiveAdmin.register Punchcard do
                          if current_user.role == 'Root'
                            User.all.map { |u| ["#{u.email}", u.id] }
                          else
-                           current_user.current_company.present? ? User.where('user_id in (select user_id from user_companies where company_id = ?)', current_user.current_company.id).map { |u| ["#{u.email}", u.id] } : User.none
+                           current_user.current_company.present? ? User.where('id in (select user_id from user_companies where company_id = ?)', current_user.current_company.id).map { |u| ["#{u.email}", u.id] } : User.none
                          end
 
       f.input :checkin_location
