@@ -54,19 +54,19 @@ ActiveAdmin.register Company do
     selectable_column
     id_column
     column :name do |company|
-      best_in_place company, :name, type: :input, path: [:admin, company]
+      best_in_place company, :name, as: :input, url: [:admin, company]
     end
     column :address do |company|
-      best_in_place company, :address, type: :textarea, path: [:admin, company]
+      best_in_place company, :address, as: :textarea, url: [:admin, company]
     end
     column :email do |company|
-      best_in_place company, :email, type: :input, path: [:admin, company]
+      best_in_place company, :email, as: :input, url: [:admin, company]
     end
     column :telephone do |company|
-      best_in_place company, :telephone, type: :input, path: [:admin, company]
+      best_in_place company, :telephone, as: :input, url: [:admin, company]
     end
     column :total_workers do |company|
-      best_in_place company, :total_workers, type: :input, path: [:admin, company]
+      best_in_place company, :total_workers, as: :input, url: [:admin, company]
     end
     column 'Logo', :photo do |company|
       image_tag(company.logo.url(:thumb), height: '100')

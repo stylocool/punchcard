@@ -1,5 +1,5 @@
 class PayrollPdf < Prawn::Document
-  def initialize(payroll_id, worker, period, days_worked, amount, amount_normal, amount_overtime, amount_deduction, view)
+  def initialize(worker, period, days_worked, amount, amount_normal, amount_overtime, amount_deduction, view)
     super(size: 'A4', page_layout: :landscape)
 
     @view = view

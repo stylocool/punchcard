@@ -67,6 +67,6 @@ class Api::PunchcardsController < ApplicationController
   end
 
   def mobile_params
-    params.permit(:checkin, :checkout, :checkin_location, :checkout_location, :company_id, :project_id, :worker_id)
+    params.permit(:checkin, :checkout, :checkin_location, :checkout_location, :company_id, :project_id, :worker_id, :user_id)
   end
 end

@@ -72,24 +72,24 @@ ActiveAdmin.register Worker do
     selectable_column
     id_column
     column :name do |worker|
-      best_in_place worker, :name, type: :input, path: [:admin, worker]
+      best_in_place worker, :name, as: :input, url: [:admin, worker]
     end
     column :race do |worker|
-      best_in_place worker, :race, type: :select, path: [:admin, worker], collection: { Chinese: 'Chinese', Indian: 'Indian', Malay: 'Malay', Others: 'Others' }
+      best_in_place worker, :race, as: :select, url: [:admin, worker], collection: { Chinese: 'Chinese', Indian: 'Indian', Malay: 'Malay', Others: 'Others' }
     end
     column :gender do |worker|
-      best_in_place worker, :gender, type: :select, path: [:admin, worker], collection: { Male: 'Male', Female: 'Female' }
+      best_in_place worker, :gender, as: :select, url: [:admin, worker], collection: { Male: 'Male', Female: 'Female' }
     end
     column :nationality
     column :contact do |worker|
-      best_in_place worker, :contact, type: :input, path: [:admin, worker]
+      best_in_place worker, :contact, as: :input, url: [:admin, worker]
     end
     column :work_permit do |worker|
-      best_in_place worker, :work_permit, type: :input, path: [:admin, worker]
+      best_in_place worker, :work_permit, as: :input, url: [:admin, worker]
     end
     column :company
     column :worker_type do |worker|
-      best_in_place worker, :worker_type, type: :select, path: [:admin, worker], collection: { Worker: 'Worker', Supervisor: 'Supervisor' }
+      best_in_place worker, :worker_type, as: :select, url: [:admin, worker], collection: { Worker: 'Worker', Supervisor: 'Supervisor' }
     end
     column :trade
     column :basic_pay do |worker|

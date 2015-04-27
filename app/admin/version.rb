@@ -80,7 +80,7 @@ ActiveAdmin.register PaperTrail::Version, as: "Audit Trail" do
       end
     end
     actions defaults: false do |v|
-      link_to 'Rollback', "audit_trails/#{v.id}/rollback"
+      link_to 'Rollback', "audit_trails/#{v.id}/rollback", data: { confirm: 'Are you sure you want to rollback this?' }
     end
   end
 

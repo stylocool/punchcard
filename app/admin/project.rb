@@ -30,7 +30,7 @@ ActiveAdmin.register Project do
     selectable_column
     id_column
     column :name do |project|
-      best_in_place project, :name, type: :input, path: [:admin, project]
+      best_in_place project, :name, as: :input, url: [:admin, project]
     end
     column :location do |project|
       link_to 'View', "http://map.google.com/?q=#{project.location}"

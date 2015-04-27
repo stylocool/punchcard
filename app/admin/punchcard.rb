@@ -89,6 +89,7 @@ ActiveAdmin.register Punchcard do
     column :company
     column :project
     column :worker
+    column 'Uploaded By', :user
     column :checkin_location do |punchcard|
       # calculate
       punchcard.calculate
@@ -198,22 +199,30 @@ ActiveAdmin.register Punchcard do
                             Company.all.map { |u| ["#{u.name}", u.id] }
                           elsif current_user.role == 'Administrator'
                             user_company = UserCompany.find_by_user_id(current_user.id)
-                            user_company.present? ? Company.all.where(id: user_company.company_id).map { |u| ["#{u.name}", u.id] } : Company.none
+                            user_company.present? ? Company.where(id: user_company.company_id).map { |u| ["#{u.name}", u.id] } : Company.none
                           end
 
       f.input :project, as: :select, include_blank: false, collection:
                           if current_user.role == 'Root'
                             Project.all.map { |u| ["#{u.name}", u.id] }
                           else
-                            current_user.current_company.present? ? Project.all.where(company_id: current_user.current_company.id).map { |u| ["#{u.name}", u.id] } : Project.none
+                            current_user.current_company.present? ? Project.where(company_id: current_user.current_company.id).map { |u| ["#{u.name}", u.id] } : Project.none
                           end
 
       f.input :worker, as: :select, include_blank: false, collection:
                          if current_user.role == 'Root'
                            Worker.all.map { |u| ["#{u.name}", u.id] }
                          else
-                           current_user.current_company.present? ? Worker.all.where(company_id: current_user.current_company.id).map { |u| ["#{u.name}", u.id] } : Worker.none
+                           current_user.current_company.present? ? Worker.where(company_id: current_user.current_company.id).map { |u| ["#{u.name}", u.id] } : Worker.none
                          end
+
+      f.input :user, as: :select, include_blank: false, collection:
+                         if current_user.role == 'Root'
+                           User.all.map { |u| ["#{u.email}", u.id] }
+                         else
+                           current_user.current_company.present? ? User.where('user_id in (select user_id from user_companies where company_id = ?)', current_user.current_company.id).map { |u| ["#{u.email}", u.id] } : User.none
+                         end
+
       f.input :checkin_location
       f.input :checkin, as: :datetime_picker
       f.input :checkout_location

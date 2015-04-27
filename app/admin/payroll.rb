@@ -25,11 +25,12 @@ ActiveAdmin.register_page 'Payrolls' do
     end
 
     def view_payroll
-      @page_title = 'Payrolls'
-      @payroll = Payroll.new(model_params)
       payroll_params = params[:payroll]
 
       if payroll_params[:mode] == 'Details'
+        @page_title = 'Payrolls'
+        @payroll = Payroll.new(model_params)
+
         year = payroll_params['period(1i)'].to_i
         month = payroll_params['period(2i)'].to_i
         day = payroll_params['period(3i)'].to_i
@@ -37,40 +38,21 @@ ActiveAdmin.register_page 'Payrolls' do
         @period = Date.new year, month, day
         days = Time.days_in_month(month, year)
 
-        start_date = @period
-        stop_date = Date.new year, month, days
-
-        @amount = 0
-        @amount_deduction = 0
-        @amount_normal = 0
-        @amount_overtime = 0
-        @days_worked = 0
+        # need to convert to utc to query database
+        start_date = Time.zone.parse(@period.strftime('%Y-%m-01 00:00:00')).utc
+        stop_date = Time.zone.parse(@period.strftime("%Y-%m-#{days} 00:00:00")).utc
 
         # processing worker payroll
         @worker = Worker.find(payroll_params[:object_id])
-        @punchcards = Punchcard.where('worker_id = ? and checkin >= ? and checkout <= ?', payroll_params[:object_id], start_date, stop_date)
-        @amount = 0
-        @items = []
+        @punchcards = Punchcard.where(worker_id: @worker.id, checkin: start_date.utc..stop_date.utc)
 
-        (0..days - 1).each do |index|
-          item = PayrollWorkItem.new
-          item.date = Date.new year, month, index + 1
-          @items.push item
-        end
-
-        if @punchcards.count > 0
-          @days_worked = @punchcards.count
-          @punchcards.each do |punchcard|
-            punchcard.calculate
-            work = @items[punchcard.checkin.day - 1]
-            work.add_punchcard(punchcard)
-
-            @amount += punchcard.amount_minutes
-            @amount_deduction += punchcard.amount_deduction_minutes
-            @amount_normal += punchcard.amount_normal_minutes
-            @amount_overtime += punchcard.amount_overtime_minutes
-          end
-        end
+        calculator = PayrollCalculator.new(@punchcards, year, month, days)
+        @days_worked = calculator.days_worked
+        @amount = calculator.amount
+        @amount_normal = calculator.amount_normal
+        @amount_overtime = calculator.amount_overtime
+        @amount_deduction = calculator.amount_deduction
+        @items = calculator.items
 
         render layout: 'active_admin'
       else
@@ -87,8 +69,10 @@ ActiveAdmin.register_page 'Payrolls' do
       day = payroll_params['period(3i)'].to_i
       @period = Date.new year, month, day
       days = Time.days_in_month(month, year)
-      start_date = @period
-      stop_date = Date.new year, month, days
+
+      # need to convert to utc to query database
+      start_date = Time.zone.parse(@period.strftime('%Y-%m-01 00:00:00')).utc
+      stop_date = Time.zone.parse(@period.strftime("%Y-%m-#{days} 00:00:00")).utc
 
       if payroll_params[:object_id] == '0'
         # create zip file
@@ -96,7 +80,8 @@ ActiveAdmin.register_page 'Payrolls' do
           # all workers
           workers = Worker.where(company_id: current_user.current_company.id)
           workers.each do |worker|
-            pdf = generate_pdf(worker, @period, start_date, stop_date)
+            payroll_id = generate_payroll_id(worker, @period)
+            pdf = generate_worker_pdf(worker, @period, start_date, stop_date, year, month, days)
             zio.put_next_entry("payroll_#{payroll_id}.pdf")
             zio << pdf.render
           end
@@ -108,75 +93,31 @@ ActiveAdmin.register_page 'Payrolls' do
       else
         # individual worker
         @worker = Worker.find(payroll_params[:object_id])
-        @punchcards = Punchcard.where('worker_id = ? and checkin >= ? and checkout <= ?', payroll_params[:object_id], start_date, stop_date)
-        @amount = 0
-        @amount_deduction = 0
-        @amount_normal = 0
-        @amount_overtime = 0
-        @days_worked = 0
-        @items = []
-
-        (0..days - 1).each do |index|
-          item = PayrollWorkItem.new
-          item.date = Date.new year, month, index + 1
-          @items.push item
-        end
-
-        if @punchcards.count > 0
-          @days_worked = @punchcards.count
-          @punchcards.each do |punchcard|
-            punchcard.calculate
-            work = @items[punchcard.checkin.day - 1]
-            work.add_punchcard(punchcard)
-
-            @amount += punchcard.amount_minutes
-            @amount_deduction += punchcard.amount_deduction_minutes
-            @amount_normal += punchcard.amount_normal_minutes
-            @amount_overtime += punchcard.amount_overtime_minutes
-          end
-        end
-
         if payroll_params[:format] == 'HTML'
+          punchcards = Punchcard.where(worker_id: @worker.id, checkin: start_date.utc..stop_date.utc)
+          calculator = PayrollCalculator.new(punchcards, year, month, days)
+          @days_worked = calculator.days_worked
+          @amount = calculator.amount
+          @amount_normal = calculator.amount_normal
+          @amount_overtime = calculator.amount_overtime
+          @amount_deduction = calculator.amount_deduction
           render :view_payroll_summary
         else
-          payroll_id = @worker.name.tr(' ', '_') + '_' + Time.now.strftime('%d%m%Y%H%M%S')
-          pdf = PayrollPdf.new(payroll_id, @worker, @period, @days_worked, @amount, @amount_normal, @amount_overtime, @amount_deduction, view_context)
+          payroll_id = generate_payroll_id(@worker, @period)
+          pdf = generate_worker_pdf(@worker, @period, start_date, stop_date, year, month, days)
           send_data pdf.render, filename: "payroll_#{payroll_id}.pdf", type: 'application/pdf', disposition: 'inline'
         end
       end
     end
 
-    def generate_pdf(worker, period, start_date, stop_date)
-      punchcards = Punchcard.where('worker_id = ? and checkin >= ? and checkout <= ?', worker.id, start_date, stop_date)
-      amount = 0
-      amount_deduction = 0
-      amount_normal = 0
-      amount_overtime = 0
-      days_worked = 0
-      items = []
+    def generate_worker_pdf(worker, period, start_date, stop_date, year, month, days)
+      punchcards = Punchcard.where(worker_id: worker.id, checkin: start_date.utc..stop_date.utc)
+      calculator = PayrollCalculator.new(punchcards, year, month, days)
+      pdf = PayrollPdf.new(worker, period, calculator.days_worked, calculator.amount, calculator.amount_normal, calculator.amount_overtime, calculator.amount_deduction, view_context)
+    end
 
-      (0..days - 1).each do |index|
-        item = PayrollWorkItem.new
-        item.date = Date.new year, month, index + 1
-        items.push item
-      end
-
-      if punchcards.count > 0
-        days_worked = punchcards.count
-        punchcards.each do |punchcard|
-          punchcard.calculate
-          work = items[punchcard.checkin.day - 1]
-          work.add_punchcard(punchcard)
-
-          amount += punchcard.amount_minutes
-          amount_deduction += punchcard.amount_deduction_minutes
-          amount_normal += punchcard.amount_normal_minutes
-          amount_overtime += punchcard.amount_overtime_minutes
-        end
-      end
-
+    def generate_payroll_id(worker, period)
       payroll_id = worker.name.tr(' ', '_') + '_' + period.strftime('%B_%Y')
-      pdf = PayrollPdf.new(payroll_id, worker, period, days_worked, amount, amount_normal, amount_overtime, amount_deduction, view_context)
     end
 
     def model_params

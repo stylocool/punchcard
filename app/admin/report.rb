@@ -21,8 +21,10 @@ ActiveAdmin.register_page 'Reports' do
 
       @period = Date.new year, month, day
       days = Time.days_in_month(month, year)
-      start_date = DateTime.new year, month, 1, 0, 0, 0
-      stop_date = DateTime.new year, month, days, 23, 59, 59
+
+      # need to convert to utc to query database
+      start_date = Time.zone.parse(@period.strftime('%Y-%m-01 00:00:00')).utc
+      stop_date = Time.zone.parse(@period.strftime("%Y-%m-#{days} 00:00:00")).utc
 
       case report_params[:report_name]
       when 'Daily Punchcards'
@@ -61,22 +63,8 @@ ActiveAdmin.register_page 'Reports' do
           end
         end
 
-        @items = []
-
-        (0..days - 1).each do |index|
-          item = PayrollWorkItem.new
-          item.date = Date.new year, month, index + 1
-          item.total = 0.0
-          @items.push item
-        end
-
-        if @punchcards.count > 0
-          @punchcards.each do |punchcard|
-            punchcard.calculate
-            item = @items[punchcard.checkin.day - 1]
-            item.total = item.total + punchcard.amount.to_f
-          end
-        end
+        calculator = PayrollCalculator.new(@punchcards, year, month, days)
+        @items = calculator.items
 
         @metric = []
         (0..days - 1).each do |index|

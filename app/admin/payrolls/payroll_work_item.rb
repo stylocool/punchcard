@@ -8,6 +8,7 @@ class PayrollWorkItem
 
   def initialize
     @punchcards = []
+    @total = 0
   end
 
   def get_punchcards

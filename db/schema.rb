@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150423050155) do
+ActiveRecord::Schema.define(version: 20150427144851) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -100,10 +100,12 @@ ActiveRecord::Schema.define(version: 20150423050155) do
     t.integer  "company_id"
     t.integer  "project_id"
     t.integer  "worker_id"
+    t.integer  "user_id"
   end
 
   add_index "punchcards", ["company_id"], name: "index_punchcards_on_company_id", using: :btree
   add_index "punchcards", ["project_id"], name: "index_punchcards_on_project_id", using: :btree
+  add_index "punchcards", ["user_id"], name: "index_punchcards_on_user_id", using: :btree
   add_index "punchcards", ["worker_id"], name: "index_punchcards_on_worker_id", using: :btree
 
   create_table "sessions", force: :cascade do |t|

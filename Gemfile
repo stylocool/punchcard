@@ -17,6 +17,7 @@ gem 'groupdate'
 gem 'activerecord-session_store'
 gem 'rubyzip'
 gem 'whenever', :require => false
+gem 'active_skin'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '4.2.0'
