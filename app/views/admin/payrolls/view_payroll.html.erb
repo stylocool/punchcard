@@ -46,7 +46,7 @@
                 <td class="col col-company" style="text-align: center"><%=punchcard.company.name%></td>
                 <td class="col col-project" style="text-align: center"><%=punchcard.project.name%></td>
                 <td class="col col-checkin" style="text-align: center">
-                  <% if punchcard.check.present? %>
+                  <% if punchcard.checkin.present? %>
                   <%=punchcard.checkin.strftime("%Y-%m-%d %H:%M:%S")%>
                   <% else %>
                   &nbsp;
