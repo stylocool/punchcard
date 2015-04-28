@@ -57,13 +57,24 @@ class Api::PunchcardsController < ApplicationController
     #  end
     #end
 
-    if @punchcard.save
-      redirect_to api_punchcard_path(@punchcard)
+    if !check_duplicates @punchcard
+      if @punchcard.save
+        redirect_to api_punchcard_path(@punchcard)
+      end
+    else
+      render json: { success: false, message: 'Punchcard already exists!' }
     end
   end
 
   def show
     @punchcard = Punchcard.find(params[:id])
+  end
+
+  def check_duplicates(punchcard)
+    exist = Punchcard.where(company_id: punchcard.company_id, project_id: punchcard.project_id, worker_id: punchcard.worker_id, user_id: punchcard.user_id,
+                            checkin: punchcard.checkin, checkout: punchcard.checkout, checkin_location: punchcard.checkin_location, checkout_location: punchcard.checkout_location).count
+
+    exist > 0 ? true : false
   end
 
   def mobile_params

@@ -82,7 +82,6 @@ ActiveAdmin.register Punchcard do
     punchcards.where('fine > 0')
   end
 
-
   index do
     selectable_column
     id_column
@@ -154,6 +153,65 @@ ActiveAdmin.register Punchcard do
     actions
   end
 
+  csv do
+    column :id
+    column :company do |punchcard|
+      "#{punchcard.company.name}"
+    end
+    column :project do |punchcard|
+      "#{punchcard.project.name}"
+    end
+    column :worker do |punchcard|
+      "#{punchcard.worker.name}"
+    end
+    column :user do |punchcard|
+      if punchcard.user.present?
+        "#{punchcard.user.email}"
+      end
+    end
+    column :checkin_location do |punchcard|
+      # calculate
+      punchcard.calculate
+
+      if punchcard.checkin_location.present?
+        project_location = punchcard.project.location.split(',')
+        project_geo_loc = Geokit::GeoLoc.new(lat: project_location[0], lng: project_location[1])
+        checkin_location = punchcard.checkin_location.split(',')
+        checkin_geo_loc = Geokit::GeoLoc.new(lat: checkin_location[0], lng: checkin_location[1])
+        checkin_distance = checkin_geo_loc.distance_to(project_geo_loc, units: :kms)
+        company_setting = punchcard.company.company_setting
+        checkin_distance.to_i > company_setting.distance_check.to_i ? "#{checkin_distance.round(2)} km" : "#{checkin_distance.round(2)} km"
+      end
+    end
+    column :checkin
+    column :checkout_location do |punchcard|
+      if punchcard.checkout_location.present?
+        project_location = punchcard.project.location.split(',')
+        project_geo_loc = Geokit::GeoLoc.new(lat: project_location[0], lng: project_location[1])
+        checkout_location = punchcard.checkout_location.split(',')
+        checkout_geo_loc = Geokit::GeoLoc.new(lat: checkout_location[0], lng: checkout_location[1])
+        checkout_distance = checkout_geo_loc.distance_to(project_geo_loc, units: :kms)
+        company_setting = punchcard.company.company_setting
+        checkout_distance.to_i > company_setting.distance_check.to_i ? "#{checkout_distance.round(2)} km" : "#{checkout_distance.round(2)} km"
+      end
+    end
+    column :checkout
+    column :leave
+    column :fine do |punchcard|
+      "#{number_to_currency(punchcard.fine)}"
+    end
+    column :cancel_pay
+    column :total_work do |punchcard|
+      "#{punchcard.total_work_minutes} mins (Total) / #{punchcard.normal_work_minutes} mins (Normal) / #{punchcard.overtime_work_minutes} mins (Overtime)"
+    end
+    column :amount do |punchcard|
+      punchcard.amount_minutes < 0 ? "#{number_to_currency(punchcard.amount_minutes)}" : "#{number_to_currency(punchcard.amount_minutes)}"
+    end
+    column :remarks do |punchcard|
+      "#{punchcard.remarks}"
+    end
+  end
+
   sidebar :version, only: :show do
     if current_user.role == 'Root' || current_user.role == 'Administrator'
       @punchcard = Punchcard.find(params[:id])
@@ -217,11 +275,12 @@ ActiveAdmin.register Punchcard do
                          end
 
       f.input :user, as: :select, include_blank: false, collection:
-                         if current_user.role == 'Root'
-                           User.all.map { |u| ["#{u.email}", u.id] }
-                         else
-                           current_user.current_company.present? ? User.where('id in (select user_id from user_companies where company_id = ?)', current_user.current_company.id).map { |u| ["#{u.email}", u.id] } : User.none
-                         end
+                         #if current_user.role == 'Root'
+                         #  User.all.map { |u| ["#{u.email}", u.id] }
+                         #else
+                         #  current_user.current_company.present? ? User.where('id in (select user_id from user_companies where company_id = ?)', current_user.current_company.id).map { |u| ["#{u.email}", u.id] } : User.none
+                         #end
+                         User.find(current_user.id).map { |u| ["#{u.email}", u.id] }
 
       f.input :checkin_location
       f.input :checkin, as: :datetime_picker

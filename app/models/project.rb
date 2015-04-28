@@ -1,5 +1,5 @@
 class Project < ActiveRecord::Base
-  has_paper_trail :on => [:create, :update, :destroy]
+  has_paper_trail on: [:create, :update, :destroy]
 
   belongs_to :company
   has_many :punchcards, dependent: :destroy

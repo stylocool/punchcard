@@ -1,5 +1,5 @@
 class User < ActiveRecord::Base
-  has_paper_trail :on => [:create, :destroy]
+  has_paper_trail on: [:create, :destroy]
 
   before_create :set_default_role
 
@@ -23,7 +23,7 @@ class User < ActiveRecord::Base
   # Sarbanes-Oxley Compliance: http://en.wikipedia.org/wiki/Sarbanes%E2%80%93Oxley_Act
   def password_complexity
     if password.present? and not password.match(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W]).+/)
-      errors.add :password, "must include at least one of each: lowercase letter, uppercase letter, numeric digit, special character."
+      errors.add :password, 'must include at least one of each: lowercase letter, uppercase letter, numeric digit, special character.'
     end
   end
 

@@ -1,5 +1,5 @@
 class Punchcard < ActiveRecord::Base
-  has_paper_trail :on => [:create, :update, :destroy]
+  has_paper_trail on: [:create, :update, :destroy]
 
   belongs_to :user
   belongs_to :worker
@@ -17,7 +17,7 @@ class Punchcard < ActiveRecord::Base
 
       @calculated = 1
 
-      @remarks = ""
+      @remarks = ''
       cal_checkin = checkin
       cal_checkout = checkout
 
@@ -26,7 +26,7 @@ class Punchcard < ActiveRecord::Base
         if self.leave.present?
           if self.leave == 'Leave (AM)' || leave == 'MC'
             # set checkin to 1pm
-            append_remarks(leave + ".")
+            append_remarks(leave + '.')
             cal_checkin = cal_checkout.change(hour: 13, minute: 0, second: 0)
           else
             # no other valid reason
@@ -34,7 +34,7 @@ class Punchcard < ActiveRecord::Base
           end
         else
           # awol so set checkin to be 1pm
-          append_remarks("Checkin not available.")
+          append_remarks('Checkin not available.')
           cal_checkin = cal_checkout
         end
       end
@@ -52,7 +52,7 @@ class Punchcard < ActiveRecord::Base
           end
         else
           # awol
-          append_remarks("Checkout not available.")
+          append_remarks('Checkout not available.')
           cal_checkout = cal_checkin
         end
       end
@@ -96,7 +96,7 @@ class Punchcard < ActiveRecord::Base
       if company.company_setting.lunch_hour && lunch_hour
         #if hours > 0
         if total_minutes > 0
-          append_remarks("Lunch hour deduction.")
+          append_remarks('Lunch hour deduction.')
           #hours -= 1
           total_minutes -= 60
         end
@@ -106,7 +106,7 @@ class Punchcard < ActiveRecord::Base
       if company.company_setting.dinner_hour && dinner_hour
         #if hours > 0
         if total_minutes > 0
-          append_remarks("Dinner hour deduction.")
+          append_remarks('Dinner hour deduction.')
           #hours -= 1
           total_minutes -= 60
         end
