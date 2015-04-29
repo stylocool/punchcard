@@ -100,11 +100,20 @@ ActiveAdmin.register Worker do
   end
 
   filter :name
-  filter :race
-  filter :gender
-  filter :nationality
+  filter :race, as: :select, include_blank: false, collection: { Chinese: 'Chinese', Indian: 'Indian', Malay: 'Malay', Others: 'Others' }
+  filter :gender, as: :select, include_blank: false, collection: { Male: 'Male', Female: 'Female' }
+  filter :nationality, as: :select, include_blank: false, collection: proc {
+                        Worker.select(:nationality).uniq.map { |u| ["#{u.nationality}", "#{u.nationality}"] }
+                     }
   filter :work_permit
-  filter :company
+  filter :company, as: :select, collection: proc {
+                   if current_user.role == 'Root'
+                     Company.all.map { |u| ["#{u.name}", u.id] }
+                   elsif current_user.role == 'Administrator'
+                     user_company = UserCompany.find_by_user_id(current_user.id)
+                     user_company.present? ? Company.all.where(id: user_company.company_id).map { |u| ["#{u.name}", u.id] } : Company.none
+                   end
+                 }
   filter :worker_type, as: :select, collection: { Accountant: 'Accountant', Admin: 'Admin', Drafter: 'Drafter', Engineer: 'Engineer', Manager: 'Manager', Purchaser: 'Purchaser', QS: 'QS', Supervisor: 'Supervisor', Worker: 'Worker' }
   filter :trade, as: :select, collection: { Electrical: 'Electrical', Fire: 'Fire' }
 

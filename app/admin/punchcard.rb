@@ -275,12 +275,7 @@ ActiveAdmin.register Punchcard do
                          end
 
       f.input :user, as: :select, include_blank: false, collection:
-                         #if current_user.role == 'Root'
-                         #  User.all.map { |u| ["#{u.email}", u.id] }
-                         #else
-                         #  current_user.current_company.present? ? User.where('id in (select user_id from user_companies where company_id = ?)', current_user.current_company.id).map { |u| ["#{u.email}", u.id] } : User.none
-                         #end
-                         User.find(current_user.id).map { |u| ["#{u.email}", u.id] }
+                         User.where(id: current_user.id).map { |u| ["#{u.email}", u.id] }
 
       f.input :checkin_location
       f.input :checkin, as: :datetime_picker

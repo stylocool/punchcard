@@ -87,7 +87,7 @@ ActiveAdmin.register Company do
       f.input :email
       f.input :telephone, as: :number
       f.input :total_workers, as: :number
-      f.input :logo, required: false, hint: image_tag(f.company.logo.url(:thumb))
+      f.input :logo, required: false, hint: f.company.logo.present? ? image_tag(f.company.logo.url(:thumb)) : content_tag(:span, 'No logo found')
     end
     f.actions
   end
