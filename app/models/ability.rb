@@ -13,11 +13,13 @@ class Ability
       can :manage, User
 
       if user.current_company.present?
-        can [:read, :update, :destroy], Company, id: user.current_company.id
+        can :manage, Company, id: user.current_company.id
 
         if user.current_company.company_setting.present?
-          can [:read, :update, :destroy], CompanySetting, id: user.current_company.company_setting.id
+          can :manage, CompanySetting, id: user.current_company.company_setting.id
+          can :create, CompanySetting
         else
+          can :read, CompanySetting, id: user.current_company.company_setting.id
           can :create, CompanySetting
         end
 
@@ -25,31 +27,34 @@ class Ability
 
         payments = Payment.where(company_id: user.current_company.id);
         if payments.present?
-          can [:read, :update, :destroy], Payment, company_id: user.current_company.id
+          can :manage, Payment, company_id: user.current_company.id
           can :create, Payment
         else
+          can :read, Payment, company_id: user.current_company.id
           can :create, Payment
         end
 
         projects = Project.where(company_id: user.current_company.id)
         if projects.present?
-          can [:read, :update, :destroy], Project, company_id: user.current_company.id
+          can :manage, Project, company_id: user.current_company.id
           can :create, Project
         else
+          can :read, Project, company_id: user.current_company.id
           can :create, Project
         end
 
         punchcards = Punchcard.where(company_id: user.current_company.id)
         if punchcards.present?
-          can [:read, :update, :destroy], Punchcard, company_id: user.current_company.id
+          can :manage, Punchcard, company_id: user.current_company.id
           can :create, Punchcard
         else
+          can :read, Punchcard, company_id: user.current_company.id
           can :create, Punchcard
         end
 
         workers = Worker.where(company_id: user.current_company.id).count
         if workers > 0
-          can [:read, :update, :destroy], Worker, company_id: user.current_company.id
+          can :manage, Worker, company_id: user.current_company.id
           # check if no. of workers exceeded license
           if user.current_company.license.present?
             if workers < user.current_company.license.total_workers
@@ -60,10 +65,12 @@ class Ability
           can :manage, ActiveAdmin::Page, name: "Reports", namespace_name: "admin"
           can :manage, ActiveAdmin::Page, name: "Payrolls", namespace_name: "admin"
         else
+          can :read, Worker, company_id: user.current_company.id
           can :create, Worker
         end
         can :manage, PaperTrail::Version
       else
+        can :read, Company, id: user.current_company.id
         can :create, Company
       end
       can :read, ActiveAdmin::Page, name: "Dashboard"

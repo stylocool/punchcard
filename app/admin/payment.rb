@@ -80,7 +80,7 @@ ActiveAdmin.register Payment do
     actions
   end
 
-  filter :created_at
+  filter :created_at, as: :date_time_range
   filter :status
 
   form do |f|

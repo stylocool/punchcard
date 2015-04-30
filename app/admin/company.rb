@@ -76,7 +76,7 @@ ActiveAdmin.register Company do
   end
 
   filter :address
-  filter :created_at
+  filter :created_at, as: :date_time_range
   filter :email
   filter :name
 

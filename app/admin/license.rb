@@ -34,7 +34,9 @@ ActiveAdmin.register License do
     column :cost_per_worker
     column :company
     column :created_at
-    column :expired_at
+    column :expired_at do |license|
+      license.expired_at < Time.now ? content_tag(:div, "#{license.expired_at.strftime('%Y-%m-%d %H:%M:%S')}", style: 'color:red') : content_tag(:div, "#{license.expired_at.strftime('%Y-%m-%d %H:%M:%S')}")
+    end
     actions
   end
 
@@ -47,7 +49,7 @@ ActiveAdmin.register License do
       f.input :cost_per_worker, as: :number
       f.input :company, as: :select, include_blank: false, collection:
                           Company.all.map { |u| ["#{u.name}", u.id] }
-      f.input :expired_at, as: :datepicker
+      f.input :expired_at, as: :datetime_picker
     end
     f.actions
   end

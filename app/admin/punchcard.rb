@@ -1,4 +1,35 @@
 ActiveAdmin.register Punchcard do
+  #active_admin_import headers_rewrites: { 'Company' => :company_id, 'Project' => :project_id,
+  #                                        'Worker' => :worker_id, 'User' => :user_id,
+  #                                        'Checkin location' => :checkin_location, 'Checkin' => :checkin, 'Checkout location' => :checkout_location, 'Checkout' => :checkout,
+  #                                        'Leave' => :leave, 'Fine' => :fine, 'Cancel pay' => :cancel_pay },
+  #                    before_batch_import: ->(importer) {
+  #                      company_names = importer.values_at(:company_id)
+  #                      companies = Company.where(name: company_names).pluck(:name, :id)
+  #                      options = Hash[*companies.flatten]
+  #                      importer.batch_replace(:company_id, options)
+  #                      project_names = importer.values_at(:project_id)
+  #                      projects = Project.where(name: project_names).pluck(:name, :id)
+  #                      options = Hash[*projects.flatten]
+  #                      importer.batch_replace(:project_id, options)
+  #                      worker_names = importer.values_at(:worker_id)
+  #                      workers = Worker.where(name: worker_names).pluck(:name, :id)
+  #                      options = Hash[*workers.flatten]
+  #                      importer.batch_replace(:worker_id, options)
+  #                      user_names = importer.values_at(:user_id)
+  #                      users   = User.where(email: user_names).pluck(:email, :id)
+  #                      options = Hash[*users.flatten]
+  #                      importer.batch_replace(:user_id, options)
+  #                    },
+  #                    validate: false,
+  #                    resource_class: Punchcard,
+  #                    template: 'import' ,
+  #                    template_object: ActiveAdminImport::Model.new(
+  #                        name: 'Punchcard',
+  #                        force_encoding: :auto,
+  #                        csv_options: { col_sep: ',', row_sep: nil, quote_char: nil }
+  #                    )
+
   permit_params :company_id, :project_id, :worker_id, :checkin_location, :checkin, :checkout_location, :checkout, :fine, :cancel_pay, :leave
 
   controller do
@@ -154,7 +185,6 @@ ActiveAdmin.register Punchcard do
   end
 
   csv do
-    column :id
     column :company do |punchcard|
       "#{punchcard.company.name}"
     end
@@ -169,7 +199,8 @@ ActiveAdmin.register Punchcard do
         "#{punchcard.user.email}"
       end
     end
-    column :checkin_location do |punchcard|
+    column :checkin_location
+    column :checkin_location_diff do |punchcard|
       # calculate
       punchcard.calculate
 
@@ -184,7 +215,8 @@ ActiveAdmin.register Punchcard do
       end
     end
     column :checkin
-    column :checkout_location do |punchcard|
+    column :checkout_location
+    column :checkout_location_diff do |punchcard|
       if punchcard.checkout_location.present?
         project_location = punchcard.project.location.split(',')
         project_geo_loc = Geokit::GeoLoc.new(lat: project_location[0], lng: project_location[1])
@@ -197,9 +229,7 @@ ActiveAdmin.register Punchcard do
     end
     column :checkout
     column :leave
-    column :fine do |punchcard|
-      "#{number_to_currency(punchcard.fine)}"
-    end
+    column :fine
     column :cancel_pay
     column :total_work do |punchcard|
       "#{punchcard.total_work_minutes} mins (Total) / #{punchcard.normal_work_minutes} mins (Normal) / #{punchcard.overtime_work_minutes} mins (Overtime)"
@@ -244,8 +274,8 @@ ActiveAdmin.register Punchcard do
                     end
                 }
 
-  filter :checkin
-  filter :checkout
+  filter :checkin, as: :date_time_range
+  filter :checkout, as: :date_time_range
   filter :leave, as: :select, collection: { AmLeave: 'Leave (AM)', PmLeave: 'Leave (PM)', Leave: 'Leave', MC: 'MC' }
   filter :cancel_pay
   filter :fine

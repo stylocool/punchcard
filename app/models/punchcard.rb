@@ -17,7 +17,15 @@ class Punchcard < ActiveRecord::Base
 
       @calculated = 1
 
+      @total_work_minutes = 0
+      @normal_work_minutes = 0
+      @overtime_work_minutes = 0
+      @amount_minutes = 0
+      @amount_normal_minutes = 0
+      @amount_overtime_minutes = 0
+      @amount_deduction_minutes = 0
       @remarks = ''
+
       cal_checkin = checkin
       cal_checkout = checkout
 
@@ -57,7 +65,9 @@ class Punchcard < ActiveRecord::Base
         end
       end
 
-      if cal_checkin > cal_checkout
+      if !cal_checkin.present? && !cal_checkout.present?
+        return
+      elsif cal_checkin > cal_checkout
         append_remarks('Checkin is later than Checkout.')
       end
 

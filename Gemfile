@@ -18,6 +18,8 @@ gem 'activerecord-session_store'
 gem 'rubyzip'
 gem 'whenever', :require => false
 gem 'active_skin'
+gem 'active_admin_import',  github: 'Fivell/active_admin_import'
+gem 'active_admin_datetimepicker'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '4.2.0'
