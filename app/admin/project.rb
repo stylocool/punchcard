@@ -54,7 +54,7 @@ ActiveAdmin.register Project do
   form do |f|
     f.inputs 'Project Details' do
       f.input :name
-      f.input :location, label: 'Location (lat,lng). Use Google Map to find the coordinates.)'
+      f.input :location, label: 'Location (lat,lng)', hint: f.project.location.present? ? link_to('View', "http://map.google.com/?q=#{f.project.location}") : link_to('Check', 'http://map.google.com')
       f.input :company, as: :select, include_blank: false, collection:
                           if current_user.role == 'Root'
                             Company.all.map { |u| ["#{u.name}", u.id] }

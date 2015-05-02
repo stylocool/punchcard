@@ -58,6 +58,11 @@ ActiveAdmin.register PaperTrail::Version, as: "Audit Trail" do
     end
   end
 
+  scope :all, default: true
+  scope :today do |versions|
+    versions.where("created_at >= ?", Time.now.beginning_of_day)
+  end
+
   index do
     selectable_column
     id_column

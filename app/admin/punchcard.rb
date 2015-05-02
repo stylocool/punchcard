@@ -100,6 +100,9 @@ ActiveAdmin.register Punchcard do
   end
 
   scope :all, default: true
+  scope :today do |punchcards|
+    punchcards.where("checkin >= ?", Time.now.beginning_of_day)
+  end
   scope :empty_checkin do |punchcards|
     punchcards.where('checkin is null')
   end
