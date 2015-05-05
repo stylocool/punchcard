@@ -14,10 +14,6 @@ class ApplicationController < ActionController::Base
     user_auth_token = request.headers["X-API-TOKEN"].presence
     user = User.find_by_email(user_email)
 
-    #puts(user_auth_token)
-    #puts(user.authentication_token)
-    #puts(user.authentication_token_expiry)
-
     if user.authentication_token.present?
       if user.authentication_token_expiry < Time.now
         warden.custom_failure!
@@ -38,6 +34,8 @@ class ApplicationController < ActionController::Base
       usercompany = UserCompany.find_by_user_id(current_user.id)
       if usercompany.present?
         current_user.current_company = Company.find(usercompany.company_id)
+      else
+        current_user.current_company = Company.none
       end
     end
   end
