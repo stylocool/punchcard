@@ -1,12 +1,13 @@
 class PayrollCalculator
 
-  attr_accessor :amount, :amount_deduction, :amount_normal, :amount_overtime, :days_worked, :items
+  attr_accessor :amount, :amount_deduction, :amount_normal, :amount_overtime, :amount_fine, :days_worked, :items
 
   def initialize(punchcards, year, month, days)
     @amount = 0
     @amount_deduction = 0
     @amount_normal = 0
     @amount_overtime = 0
+    @amount_fine = 0
     @days_worked = 0
     @items = []
 
@@ -33,6 +34,9 @@ class PayrollCalculator
         @amount_deduction += punchcard.amount_deduction_minutes
         @amount_normal += punchcard.amount_normal_minutes
         @amount_overtime += punchcard.amount_overtime_minutes
+        if punchcard.fine.to_f > 0
+          @amount_fine += punchcard.fine.to_f
+        end
       end
     end
   end

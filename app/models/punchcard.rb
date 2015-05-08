@@ -7,7 +7,7 @@ class Punchcard < ActiveRecord::Base
   belongs_to :company
 
   #attr_accessor :calculated, :total_hours, :normal_work_hours, :overtime_work_hours, :amount, :amount_normal, :amount_overtime, :amount_deduction, :remarks,
-  attr_accessor :calculated, :total_work_minutes, :normal_work_minutes, :overtime_work_minutes, :amount_minutes, :amount_normal_minutes, :amount_overtime_minutes, :amount_deduction_minutes, :remarks
+  attr_accessor :calculated, :total_work_minutes, :normal_work_minutes, :overtime_work_minutes, :amount_minutes, :amount_normal_minutes, :amount_overtime_minutes, :amount_deduction_minutes
 
   @calculated = 0
 
@@ -42,7 +42,7 @@ class Punchcard < ActiveRecord::Base
           end
         else
           # awol so set checkin to be 1pm
-          append_remarks('Checkin not available.')
+          append_remarks('Checkin not available')
           cal_checkin = cal_checkout
         end
       end
@@ -52,7 +52,7 @@ class Punchcard < ActiveRecord::Base
         if self.leave.present?
           if self.leave == 'Leave (PM)' || leave == 'MC'
             # set checkin to 1pm
-            append_remarks(leave + ".")
+            append_remarks(leave)
             cal_checkout = cal_checkin.change(hour: 13, minute: 0, second: 0)
           else
             # no other valid reason
@@ -60,7 +60,7 @@ class Punchcard < ActiveRecord::Base
           end
         else
           # awol
-          append_remarks('Checkout not available.')
+          append_remarks('Checkout not available')
           cal_checkout = cal_checkin
         end
       end
@@ -68,7 +68,7 @@ class Punchcard < ActiveRecord::Base
       if !cal_checkin.present? && !cal_checkout.present?
         return
       elsif cal_checkin > cal_checkout
-        append_remarks('Checkin is later than Checkout.')
+        append_remarks('Checkin is later than Checkout')
       end
 
       seconds_diff = (cal_checkout - cal_checkin).to_i.abs
@@ -106,7 +106,7 @@ class Punchcard < ActiveRecord::Base
       if company.company_setting.lunch_hour && lunch_hour
         #if hours > 0
         if total_minutes > 0
-          append_remarks('Lunch hour deduction.')
+          append_remarks('Lunch hour deduction')
           #hours -= 1
           total_minutes -= 60
         end
@@ -116,7 +116,7 @@ class Punchcard < ActiveRecord::Base
       if company.company_setting.dinner_hour && dinner_hour
         #if hours > 0
         if total_minutes > 0
-          append_remarks('Dinner hour deduction.')
+          append_remarks('Dinner hour deduction')
           #hours -= 1
           total_minutes -= 60
         end
@@ -192,11 +192,10 @@ class Punchcard < ActiveRecord::Base
   end
 
   def append_remarks(msg)
-    if @remarks.length > 0
-      @remarks = @remarks + ' ' + msg
+    if self.remarks.present? && self.remarks.length > 0
+      self.remarks = self.remarks + '. ' + msg
     else
-      @remarks = msg
+      self.remarks = msg
     end
-    #@remarks
   end
 end

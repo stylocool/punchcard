@@ -68,9 +68,9 @@ ActiveAdmin.register Company do
     column :total_workers do |company|
       best_in_place company, :total_workers, as: :input, url: [:admin, company]
     end
-    column 'Logo', :photo do |company|
-      image_tag(company.logo.url(:thumb), height: '100')
-    end
+    #column 'Logo', :photo do |company|
+    #  image_tag(company.logo.url(:thumb), height: '100')
+    #end
     column :created_at
     actions
   end
@@ -87,7 +87,7 @@ ActiveAdmin.register Company do
       f.input :email
       f.input :telephone, as: :number
       f.input :total_workers, as: :number
-      f.input :logo, required: false, hint: f.company.logo.present? ? image_tag(f.company.logo.url(:thumb)) : content_tag(:span, 'No logo found')
+      #f.input :logo, required: false, hint: f.company.logo.present? ? image_tag(f.company.logo.url(:thumb)) : content_tag(:span, 'No logo found')
     end
     f.actions
   end

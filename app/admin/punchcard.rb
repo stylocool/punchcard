@@ -30,7 +30,7 @@ ActiveAdmin.register Punchcard do
   #                        csv_options: { col_sep: ',', row_sep: nil, quote_char: nil }
   #                    )
 
-  permit_params :company_id, :project_id, :worker_id, :checkin_location, :checkin, :checkout_location, :checkout, :fine, :cancel_pay, :leave
+  permit_params :company_id, :project_id, :worker_id, :checkin_location, :checkin, :checkout_location, :checkout, :fine, :cancel_pay, :leave, :remarks
 
   controller do
 
@@ -317,6 +317,7 @@ ActiveAdmin.register Punchcard do
       f.input :leave, as: :select, collection: { AmLeave: 'Leave (AM)', PmLeave: 'Leave (PM)', Leave: 'Leave', MC: 'MC' }
       f.input :fine, as: :number
       f.input :cancel_pay
+      f.input :remarks
     end
     f.actions
   end

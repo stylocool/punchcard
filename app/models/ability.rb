@@ -13,7 +13,7 @@ class Ability
       can :manage, User
 
       if user.current_company.present?
-        can :manage, Company, id: user.current_company.id
+        can [:read, :update, :destroy], Company, id: user.current_company.id
 
         if user.current_company.company_setting.present?
           can :manage, CompanySetting, id: user.current_company.company_setting.id

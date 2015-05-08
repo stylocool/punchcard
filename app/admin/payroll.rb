@@ -1,4 +1,5 @@
 require 'zip'
+
 ActiveAdmin.register_page 'Payrolls' do
 
   content only: :index do
@@ -75,20 +76,25 @@ ActiveAdmin.register_page 'Payrolls' do
       stop_date = Time.zone.parse(@period.strftime("%Y-%m-#{days} 00:00:00")).utc
 
       if payroll_params[:object_id] == '0'
+        # generate all workers' payroll and merge as one file
+        workers = Worker.where(company_id: current_user.current_company.id)
+        pdf = generate_workers_pdf(workers, @period, start_date, stop_date, year, month, days)
+        send_data pdf.render, filename: "Payrolls_#{@period.strftime('%B_%Y')}.pdf", type: 'application/pdf', disposition: 'attachment'
+
         # create zip file
-        stringio = Zip::OutputStream.write_buffer do |zio|
+        #stringio = Zip::OutputStream.write_buffer do |zio|
           # all workers
-          workers = Worker.where(company_id: current_user.current_company.id)
-          workers.each do |worker|
-            payroll_id = generate_payroll_id(worker, @period)
-            pdf = generate_worker_pdf(worker, @period, start_date, stop_date, year, month, days)
-            zio.put_next_entry("payroll_#{payroll_id}.pdf")
-            zio << pdf.render
-          end
-        end
-        stringio.rewind
-        binary_data = stringio.sysread
-        send_data binary_data, filename: "payrolls_#{@period.strftime('%B_%Y')}.zip", type: 'application/zip', disposition: 'attachment'
+          #workers = Worker.where(company_id: current_user.current_company.id)
+          #workers.each do |worker|
+          #  payroll_id = generate_payroll_id(worker, @period)
+          #  pdf = generate_worker_pdf(worker, @period, start_date, stop_date, year, month, days)
+          #  zio.put_next_entry("payroll_#{payroll_id}.pdf")
+          #  zio << pdf.render
+          #end
+        #end
+        #stringio.rewind
+        #binary_data = stringio.sysread
+        #send_data binary_data, filename: "payrolls_#{@period.strftime('%B_%Y')}.zip", type: 'application/zip', disposition: 'attachment'
 
       else
         # individual worker
@@ -105,15 +111,21 @@ ActiveAdmin.register_page 'Payrolls' do
         else
           payroll_id = generate_payroll_id(@worker, @period)
           pdf = generate_worker_pdf(@worker, @period, start_date, stop_date, year, month, days)
-          send_data pdf.render, filename: "payroll_#{payroll_id}.pdf", type: 'application/pdf', disposition: 'inline'
+          send_data pdf.render, filename: "Payroll_#{payroll_id}.pdf", type: 'application/pdf', disposition: 'inline'
         end
       end
     end
 
     def generate_worker_pdf(worker, period, start_date, stop_date, year, month, days)
-      punchcards = Punchcard.where(worker_id: worker.id, checkin: start_date.utc..stop_date.utc)
-      calculator = PayrollCalculator.new(punchcards, year, month, days)
-      pdf = PayrollPdf.new(worker, period, calculator.days_worked, calculator.amount, calculator.amount_normal, calculator.amount_overtime, calculator.amount_deduction, view_context)
+      pdf = PayrollPdf.new
+      pdf.generate(worker, period, start_date, stop_date, year, month, days, view_context)
+      pdf
+    end
+
+    def generate_workers_pdf(workers, period, start_date, stop_date, year, month, days)
+      pdf = PayrollPdf.new
+      pdf.generate_and_merge(workers, period, start_date, stop_date, year, month, days, view_context)
+      pdf
     end
 
     def generate_payroll_id(worker, period)
