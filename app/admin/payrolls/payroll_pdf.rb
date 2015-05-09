@@ -67,8 +67,7 @@ class PayrollPdf < Prawn::Document
   def worker_details(worker, days_worked)
     [
         ['Work Permit', ':', worker.work_permit, 'Name', ':', worker.name],
-        ['Type', ':', worker.worker_type, 'Trade', ':', worker.trade],
-        ['No. of Days Worked', ':', days_worked, '', '', '']
+        ['No. of Days Worked', ':', days_worked, 'Trade', ':', worker.trade]
     ]
   end
 
