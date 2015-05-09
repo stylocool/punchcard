@@ -23,12 +23,15 @@ class PayrollCalculator
     end
 
     if punchcards.count > 0
-      @days_worked = punchcards.count
       punchcards.each do |punchcard|
         punchcard.calculate
         work = @items[punchcard.checkin.day - 1]
         work.total += punchcard.amount_minutes.to_f
         work.add_punchcard(punchcard)
+
+        if work.get_punchcards.length == 1
+          @days_worked += 1
+        end
 
         @amount += punchcard.amount_minutes
         @amount_deduction += punchcard.amount_deduction_minutes
