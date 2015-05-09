@@ -30,6 +30,7 @@ class PayrollPdf < Prawn::Document
       payroll_message(period)
       worker_table(worker, get_payment_date(period), calculator.days_worked)
       payroll_table(calculator.amount, calculator.amount_normal, calculator.amount_overtime, calculator.amount_deduction, view)
+      signature_table
 
       index += 1
       if index < workers.length
