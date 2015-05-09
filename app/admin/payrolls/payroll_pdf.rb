@@ -11,7 +11,12 @@ class PayrollPdf < Prawn::Document
     company(worker)
     payroll_message(period)
     worker_table(worker, calculator.days_worked)
-    payroll_table(calculator.amount, calculator.amount_normal, calculator.amount_overtime, calculator.amount_fine, calculator.amount_deduction, view)
+    payroll_table(calculator.amount, calculator.amount_normal, calculator.amount_overtime, calculator.amount_deduction, view)
+  end
+
+  def get_payment_date(period)
+    next_month = period + 1.month
+    next_month.strftime('5 %B %Y')
   end
 
   def generate_and_merge(workers, period, start_date, stop_date, year, month, days, view)
@@ -23,7 +28,7 @@ class PayrollPdf < Prawn::Document
       company(worker)
       payroll_message(period)
       worker_table(worker, calculator.days_worked)
-      payroll_table(calculator.amount, calculator.amount_normal, calculator.amount_overtime, calculator.amount_fine, calculator.amount_deduction, view)
+      payroll_table(calculator.amount, calculator.amount_normal, calculator.amount_overtime, calculator.amount_deduction, view)
 
       index += 1
       if index < workers.length
@@ -43,12 +48,14 @@ class PayrollPdf < Prawn::Document
   end
 
   def payroll_message(period)
-    move_down 10
-    text 'Payslip for the period of ' + period.strftime('%B %Y'), align: :center
+    move_down 30
+    text 'Payslip for the period of ' + period.strftime('%B %Y'), align: :center, size: 18
+    move_down 30
+    text 'Date: ' + get_payment_date(period)
   end
 
   def worker_table(worker, days_worked)
-    move_down 10
+    move_down 30
     table worker_details(worker, days_worked), width: 720 do
       cells.border_width = 0
       columns(1).align = :center
@@ -66,121 +73,94 @@ class PayrollPdf < Prawn::Document
     ]
   end
 
-  def payroll_table(amount, amount_normal, amount_overtime, amount_fine, amount_deduction, view)
-    move_down 10
-    table payroll_details(amount, amount_normal, amount_overtime, amount_fine, amount_deduction, view), width: 720 do
-      # row 0
+  def payroll_table(amount, amount_normal, amount_overtime, amount_deduction, view)
+    move_down 30
+    table payroll_details(amount, amount_normal, amount_overtime, amount_deduction, view), width: 720 do
       cells[0, 0].borders = [:top, :bottom, :left]
       cells[0, 1].borders = [:top, :bottom, :right]
       cells[0, 2].borders = [:top, :bottom, :left]
       cells[0, 3].borders = [:top, :bottom, :right]
 
-      # row 1
       cells[1, 0].borders = [:left]
       cells[1, 1].borders = [:right]
       cells[1, 2].borders = [:left]
       cells[1, 3].borders = [:right]
 
-      # row 2
-      #cells[2, 0].borders = [:left]
-      #cells[2, 1].borders = [:right]
-      #cells[2, 2].borders = [:left]
-      #cells[2, 3].borders = [:right]
-
-      # row 3
-      #cells[3, 0].borders = [:left]
-      #cells[3, 1].borders = [:right]
-      #cells[3, 2].borders = [:left]
-      #cells[3, 3].borders = [:right]
-
-      # row 4
       cells[2, 0].borders = [:left]
       cells[2, 1].borders = [:right]
       cells[2, 2].borders = [:left]
       cells[2, 3].borders = [:right]
 
-      # row 5
-      #cells[5, 0].borders = [:left]
-      #cells[5, 1].borders = [:right]
-      #cells[5, 2].borders = [:left]
-      #cells[5, 3].borders = [:right]
-
-      # row 6
-      #cells[6, 0].borders = [:left]
-      #cells[6, 1].borders = [:right]
-      #cells[6, 2].borders = [:left]
-      #cells[6, 3].borders = [:right]
-
-      # row 7
       cells[3, 0].borders = [:top, :bottom, :left]
       cells[3, 1].borders = [:top, :bottom, :right]
       cells[3, 2].borders = [:top, :bottom, :left]
       cells[3, 3].borders = [:top, :bottom, :right]
 
-      # row 8
-      cells[4, 0].borders = [:left]
-      cells[4, 1].border_width = 0
-      cells[4, 2].border_width = 0
-      cells[4, 3].borders = [:right]
+      cells[4, 0].borders = [:top, :bottom, :left]
+      cells[4, 1].borders = [:top, :bottom, :right]
+      cells[4, 2].borders = [:top, :bottom, :left]
+      cells[4, 3].borders = [:top, :bottom, :right]
 
-      # row 9
-      #cells[9, 0].borders = [:bottom, :left]
-      #cells[9, 1].borders = [:bottom]
-      #cells[9, 2].borders = [:bottom]
-      #cells[9, 3].borders = [:bottom, :right]
-
-      # row 10
       cells[5, 0].borders = [:left]
       cells[5, 1].border_width = 0
       cells[5, 2].border_width = 0
       cells[5, 3].borders = [:right]
 
-      # row 11
       cells[6, 0].borders = [:left]
       cells[6, 1].border_width = 0
       cells[6, 2].border_width = 0
       cells[6, 3].borders = [:right]
 
-      # row 12
       cells[7, 0].borders = [:left]
       cells[7, 1].border_width = 0
       cells[7, 2].border_width = 0
       cells[7, 3].borders = [:right]
 
-      # row 13
-      cells[8, 0].borders = [:bottom, :left]
+      cells[8, 0].borders = [:left]
       cells[8, 1].border_width = 0
-      cells[8, 2].borders = [:bottom]
+      cells[8, 2].border_width = 0
       cells[8, 3].borders = [:right]
 
-      # row 14
-      cells[9, 0].borders = [:bottom, :left]
-      cells[9, 1].borders = [:bottom]
-      cells[9, 2].borders = [:bottom]
-      cells[9, 3].borders = [:bottom, :right]
+      cells[9, 0].borders = [:left]
+      cells[9, 1].border_width = 0
+      cells[9, 2].border_width = 0
+      cells[9, 3].borders = [:right]
+
+      cells[10, 0].borders = [:left]
+      cells[10, 1].border_width = 0
+      cells[10, 2].border_width = 0
+      cells[10, 3].borders = [:right]
+
+      cells[11, 0].borders = [:bottom, :left]
+      cells[11, 1].border_width = 0
+      cells[11, 2].borders = [:bottom]
+      cells[11, 3].borders = [:right]
+
+      cells[12, 0].borders = [:bottom, :left]
+      cells[12, 1].borders = [:bottom]
+      cells[12, 2].borders = [:bottom]
+      cells[12, 3].borders = [:bottom, :right]
 
       self.header = true
       self.column_widths = { 0 => 180, 1 => 180, 2 => 180, 3 => 180 }
     end
   end
 
-  def payroll_details(amount, amount_normal, amount_overtime, amount_fine, amount_deduction, view)
+  def payroll_details(amount, amount_normal, amount_overtime, amount_deduction, view)
     [
       ['Earnings', 'Amount', 'Deductions', 'Amount'], # 0
-      ['Basic Pay', currency(view, amount_normal), 'Fine', currency(view, amount_fine)], # 1
-      #['Dearness Allowance', '', 'Central Provident Fund (CPF)', ''], # 2
-      #['Medical Allowance', '',	'Goods & Serices Tax (GST)', ''], # 3
-      ['Overtime', currency(view, amount_overtime), 'Cancel Pay', currency(view, amount_deduction - amount_fine)], # 4
-      #['House Rent Allowance', '', '', ''], # 5
-      #['Conveyance Allowance', '', '', ''], # 6
-      ['Total Earnings', currency(view, amount_normal + amount_overtime), 'Total Deductions',	currency(view, amount_deduction)], # 7
-      ['Allowance/Claim', '', 'Total', currency(view, amount)], # 8
-      #['Carry Over Round-Off', '', '', ''], # 9
+      ['Basic Pay', currency(view, amount_normal), 'Deduction', currency(view, amount_deduction)], # 1
+      ['Overtime', currency(view, amount_overtime), '', ''], # 2
+      ['Total Earnings', currency(view, amount_normal + amount_overtime), 'Total Deductions',	currency(view, amount_deduction)], # 3
+      ['Allowance/Claim', '', '', ''], # 4
+      ['', '', '', ''], # 5
+      ['', '', '', ''], # 6
+      ['', '', '', ''], # 7
+      ['', '', '', ''], # 8
+      ['', '', '', ''], # 9
       ['', '', '', ''], # 10
       ['', '', '', ''], # 11
-      ['', '', '', ''], # 12
-      ['', '', '', ''], # 13
-      ['Employer\'s Signature', '', 'Employee\'s Signature', ''] # 14
+      ['Employer\'s Signature', '', 'Employee\'s Signature', ''] # 12
     ]
   end
 

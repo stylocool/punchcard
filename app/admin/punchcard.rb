@@ -189,6 +189,9 @@ ActiveAdmin.register Punchcard do
 
   csv do
     column :company do |punchcard|
+      # calculate
+      punchcard.calculate
+
       "#{punchcard.company.name}"
     end
     column :project do |punchcard|
@@ -197,6 +200,12 @@ ActiveAdmin.register Punchcard do
     column :worker do |punchcard|
       "#{punchcard.worker.name}"
     end
+    column :work_permit do |punchcard|
+      "#{punchcard.worker.work_permit}"
+    end
+    column :trade do |punchcard|
+      "#{punchcard.worker.trade}"
+    end
     column :user do |punchcard|
       if punchcard.user.present?
         "#{punchcard.user.email}"
@@ -204,9 +213,6 @@ ActiveAdmin.register Punchcard do
     end
     column :checkin_location
     column :checkin_location_diff do |punchcard|
-      # calculate
-      punchcard.calculate
-
       if punchcard.checkin_location.present?
         project_location = punchcard.project.location.split(',')
         project_geo_loc = Geokit::GeoLoc.new(lat: project_location[0], lng: project_location[1])
