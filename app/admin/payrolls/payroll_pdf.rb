@@ -55,12 +55,12 @@ class PayrollPdf < Prawn::Document
 
   def worker_table(worker, payment_date, days_worked)
     move_down 10
-    table worker_details(worker, payment_date, days_worked), width: 720 do
+    table worker_details(worker, payment_date, days_worked), position: :center, width: 500 do
       cells.border_width = 0
       columns(1).align = :center
       columns(4).align = :center
       self.header = true
-      self.column_widths = {0 => 60, 1 => 40, 2 => 260, 3 => 120, 4 => 40, 5 => 200}
+      self.column_widths = {0 => 80, 1 => 20, 2 => 150, 3 => 80, 4 => 20, 5 => 150}
     end
   end
 
@@ -74,7 +74,7 @@ class PayrollPdf < Prawn::Document
 
   def payroll_table(amount, amount_normal, amount_overtime, amount_deduction, view)
     move_down 10
-    table payroll_details(amount, amount_normal, amount_overtime, amount_deduction, view), width: 720, cell_style: { inline_format: true } do
+    table payroll_details(amount, amount_normal, amount_overtime, amount_deduction, view), position: :center, width: 500, cell_style: { inline_format: true } do
       cells[0, 0].borders = [:top, :bottom, :left, :right]
       cells[0, 1].borders = [:top, :bottom, :left, :right]
 
@@ -110,7 +110,7 @@ class PayrollPdf < Prawn::Document
 
       self.header = true
       columns(1).align = :center
-      self.column_widths = { 0 => 360, 1 => 360 }
+      self.column_widths = { 0 => 250, 1 => 250 }
     end
   end
 
@@ -132,7 +132,7 @@ class PayrollPdf < Prawn::Document
 
   def signature_table
     move_down 50
-    table signature_details, width: 720 do
+    table signature_details, position: :center, width: 500 do
 
       cells[0, 0].borders = [:bottom]
       cells[0, 1].border_width = 0
@@ -145,7 +145,7 @@ class PayrollPdf < Prawn::Document
       cells[1, 3].border_width = 0
 
       self.header = true
-      self.column_widths = {0 => 180, 1 => 180, 2 => 180, 3 => 180}
+      self.column_widths = {0 => 125, 1 => 125, 2 => 125, 3 => 125}
     end
   end
 
