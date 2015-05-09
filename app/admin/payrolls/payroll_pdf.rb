@@ -32,7 +32,6 @@ class PayrollPdf < Prawn::Document
 
       index += 1
       if index < workers.length
-        puts(index.to_s + ' ' + workers.length.to_s)
         start_new_page
       end
     end
