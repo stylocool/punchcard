@@ -61,7 +61,7 @@ class PayrollPdf < Prawn::Document
       columns(1).align = :center
       columns(4).align = :center
       self.header = true
-      self.column_widths = {0 => 160, 1 => 40, 2 => 160, 3 => 160, 4 => 40, 5 => 160}
+      self.column_widths = {0 => 120, 1 => 40, 2 => 200, 3 => 60, 4 => 40, 5 => 260}
     end
   end
 
